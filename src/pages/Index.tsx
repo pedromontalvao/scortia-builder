@@ -1,153 +1,201 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Heart, MapPin, Star } from "lucide-react";
-import { useState } from "react";
-
-// Dummy data for models
-const dummyModels = [
-  {
-    id: 1,
-    name: "Maria Silva",
-    description: "Professional model with a passion for fashion and photography",
-    hourlyRate: 150,
-    imageUrl: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7",
-    interests: ["Fashion", "Photography", "Travel"],
-    age: 24,
-    location: "São Paulo",
-    rating: 4.8,
-    height: "1.75m",
-    measurements: "90-60-90",
-  },
-  {
-    id: 2,
-    name: "Ana Santos",
-    description: "Experienced model specializing in runway and editorial work",
-    hourlyRate: 180,
-    imageUrl: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
-    interests: ["Runway", "Editorial", "Fashion"],
-    age: 26,
-    location: "Rio de Janeiro",
-    rating: 4.9,
-    height: "1.78m",
-    measurements: "86-61-89",
-  },
-  {
-    id: 3,
-    name: "Carolina Lima",
-    description: "Commercial and fashion model available for photoshoots",
-    hourlyRate: 160,
-    imageUrl: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
-    interests: ["Commercial", "Fashion", "Print"],
-    age: 23,
-    location: "Belo Horizonte",
-    rating: 4.7,
-    height: "1.76m",
-    measurements: "88-62-91",
-  },
-];
+import { Search, Grid, List } from "lucide-react";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 const Index = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [priceRange, setPriceRange] = useState({ min: 0, max: 1000 });
 
-  const filteredModels = dummyModels.filter((model) =>
-    model.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    model.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    model.interests.some(interest => 
-      interest.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  );
+  const jobTypes = [
+    "Fashion",
+    "Commercial",
+    "Events",
+    "Editorial",
+    "Runway"
+  ];
+
+  const experienceLevels = [
+    "Iniciante (0-2 anos)",
+    "Intermediário (2-5 anos)",
+    "Experiente (5+ anos)"
+  ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-pink-50">
-      {/* Hero Section */}
-      <div className="bg-gradient-to-r from-purple-600 to-pink-500 text-white py-20">
-        <div className="container mx-auto px-4">
-          <h1 className="text-4xl md:text-6xl font-bold text-center mb-6 animate-fade-in">
-            Exclusive Models
-          </h1>
-          <p className="text-xl md:text-2xl text-center mb-8 text-purple-100">
-            Connect with professional models for your next project
-          </p>
-          <div className="max-w-xl mx-auto relative">
+    <div className="min-h-screen bg-white">
+      {/* Navigation */}
+      <nav className="bg-[#15171E] text-white p-4">
+        <div className="container mx-auto flex justify-between items-center">
+          <div className="text-xl font-bold">VivAcompanhantes</div>
+          <div className="space-x-6">
+            <a href="#" className="hover:text-gray-300">Home</a>
+            <a href="#" className="hover:text-gray-300">Sobre Nós</a>
+            <a href="#" className="hover:text-gray-300">Modelos</a>
+            <a href="#" className="hover:text-gray-300">Contato</a>
+          </div>
+        </div>
+      </nav>
+
+      {/* Search Section */}
+      <div className="bg-white py-6 px-4 shadow-sm">
+        <div className="container mx-auto">
+          <div className="relative">
+            <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
             <Input
               type="search"
-              placeholder="Search by name, interests, or location..."
-              className="w-full pl-10 bg-white/90 text-gray-900 backdrop-blur-sm border-purple-200 focus:border-purple-300"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Buscar por nome, cidade ou especialidade..."
+              className="pl-10 h-12 w-full"
             />
-            <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
           </div>
         </div>
       </div>
 
-      {/* Models Grid */}
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredModels.map((model) => (
-            <Card key={model.id} className="overflow-hidden hover:shadow-lg transition-shadow bg-white/80 backdrop-blur-sm border-purple-100">
-              <div className="relative">
-                <img
-                  src={model.imageUrl}
-                  alt={model.name}
-                  className="w-full h-96 object-cover"
-                />
-                <div className="absolute top-4 right-4">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="rounded-full bg-white/90 hover:bg-white hover:text-pink-500"
-                  >
-                    <Heart className="h-5 w-5" />
-                  </Button>
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
-                  <h3 className="text-2xl font-semibold text-white mb-1">{model.name}</h3>
-                  <div className="flex items-center text-white/90 gap-2 text-sm">
-                    <MapPin className="h-4 w-4" />
-                    <span>{model.location}</span>
-                    <span className="text-white/60">•</span>
-                    <span>{model.age} years</span>
-                    <span className="text-white/60">•</span>
-                    <div className="flex items-center">
-                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 mr-1" />
-                      <span>{model.rating}</span>
-                    </div>
-                  </div>
-                </div>
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex gap-8">
+          {/* Filters Sidebar */}
+          <div className="w-64 flex-shrink-0">
+            <div className="bg-white rounded-lg shadow p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-semibold">Filtros</h2>
+                <button className="text-blue-600 text-sm">Limpar Filtros</button>
               </div>
-              <CardContent className="p-6">
-                <div className="mb-4">
-                  <div className="text-sm text-gray-600 mb-2">
-                    <span className="font-semibold">Height:</span> {model.height} | 
-                    <span className="font-semibold ml-2">Measurements:</span> {model.measurements}
-                  </div>
-                  <p className="text-gray-700">{model.description}</p>
-                </div>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {model.interests.map((interest, index) => (
-                    <span
-                      key={index}
-                      className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm"
-                    >
-                      {interest}
-                    </span>
+
+              {/* Location */}
+              <div className="mb-6">
+                <h3 className="font-medium mb-3">Localização</h3>
+                <Input placeholder="Digite sua cidade" className="w-full" />
+              </div>
+
+              {/* Job Types */}
+              <div className="mb-6">
+                <h3 className="font-medium mb-3">Tipo de Trabalho</h3>
+                <div className="space-y-2">
+                  {jobTypes.map((type) => (
+                    <label key={type} className="flex items-center">
+                      <input type="checkbox" className="mr-2" />
+                      <span>{type}</span>
+                    </label>
                   ))}
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-purple-600">
-                    R${model.hourlyRate}/hr
-                  </span>
-                  <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
-                    Book Now
+              </div>
+
+              {/* Experience */}
+              <div className="mb-6">
+                <h3 className="font-medium mb-3">Experiência</h3>
+                <div className="space-y-2">
+                  {experienceLevels.map((level) => (
+                    <label key={level} className="flex items-center">
+                      <input type="checkbox" className="mr-2" />
+                      <span>{level}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Price Range */}
+              <div className="mb-6">
+                <h3 className="font-medium mb-3">Faixa de Preço (R$/hora)</h3>
+                <div className="flex gap-2">
+                  <Input
+                    type="number"
+                    value={priceRange.min}
+                    onChange={(e) => setPriceRange({ ...priceRange, min: Number(e.target.value) })}
+                    placeholder="0"
+                  />
+                  <span className="self-center">até</span>
+                  <Input
+                    type="number"
+                    value={priceRange.max}
+                    onChange={(e) => setPriceRange({ ...priceRange, max: Number(e.target.value) })}
+                    placeholder="1000"
+                  />
+                </div>
+              </div>
+
+              <Button className="w-full bg-[#15171E]">
+                Aplicar Filtros
+              </Button>
+            </div>
+          </div>
+
+          {/* Main Content */}
+          <div className="flex-1">
+            {/* Section Headers */}
+            <div className="mb-8">
+              <h1 className="text-2xl font-bold mb-2">Acompanhantes Premium</h1>
+              <div className="flex justify-between items-center">
+                <div className="flex gap-2">
+                  <Button
+                    variant={viewMode === "grid" ? "default" : "outline"}
+                    size="icon"
+                    onClick={() => setViewMode("grid")}
+                  >
+                    <Grid className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant={viewMode === "list" ? "default" : "outline"}
+                    size="icon"
+                    onClick={() => setViewMode("list")}
+                  >
+                    <List className="h-4 w-4" />
                   </Button>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
+              </div>
+            </div>
+
+            {/* Pagination */}
+            <div className="mt-8">
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious href="#" />
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationLink href="#" isActive>1</PaginationLink>
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationLink href="#">2</PaginationLink>
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationLink href="#">3</PaginationLink>
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationNext href="#" />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
+          </div>
         </div>
       </div>
+
+      {/* Call to Action */}
+      <div className="bg-[#15171E] text-white py-16 text-center">
+        <h2 className="text-3xl font-bold mb-4">Seja uma Modelo</h2>
+        <p className="text-xl mb-8 text-yellow-500">Cadastre-se Agora!</p>
+        <Button className="bg-yellow-500 hover:bg-yellow-600 text-black">
+          Começar
+        </Button>
+      </div>
+
+      {/* Footer */}
+      <footer className="bg-[#15171E] text-white py-4 text-center">
+        <p>© 2024 VivAcompanhantes. Todos os direitos reservados. 
+          <a href="#" className="text-yellow-500 ml-2">Fale Conosco</a>
+        </p>
+      </footer>
     </div>
   );
 };
