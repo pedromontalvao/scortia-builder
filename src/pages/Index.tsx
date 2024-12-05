@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Heart } from "lucide-react";
+import { Search, Heart, MapPin, Star } from "lucide-react";
 import { useState } from "react";
 
 // Dummy data for models
@@ -15,26 +15,35 @@ const dummyModels = [
     interests: ["Fashion", "Photography", "Travel"],
     age: 24,
     location: "São Paulo",
+    rating: 4.8,
+    height: "1.75m",
+    measurements: "90-60-90",
   },
   {
     id: 2,
     name: "Ana Santos",
-    description: "Experienced model who loves creative projects and artistic expression",
+    description: "Experienced model specializing in runway and editorial work",
     hourlyRate: 180,
     imageUrl: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
-    interests: ["Art", "Dance", "Fashion"],
+    interests: ["Runway", "Editorial", "Fashion"],
     age: 26,
     location: "Rio de Janeiro",
+    rating: 4.9,
+    height: "1.78m",
+    measurements: "86-61-89",
   },
   {
     id: 3,
     name: "Carolina Lima",
-    description: "Passionate about creating memorable moments in front of the camera",
+    description: "Commercial and fashion model available for photoshoots",
     hourlyRate: 160,
     imageUrl: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
-    interests: ["Photography", "Travel", "Fashion"],
+    interests: ["Commercial", "Fashion", "Print"],
     age: 23,
     location: "Belo Horizonte",
+    rating: 4.7,
+    height: "1.76m",
+    measurements: "88-62-91",
   },
 ];
 
@@ -55,7 +64,7 @@ const Index = () => {
       <div className="bg-gradient-to-r from-purple-600 to-pink-500 text-white py-20">
         <div className="container mx-auto px-4">
           <h1 className="text-4xl md:text-6xl font-bold text-center mb-6 animate-fade-in">
-            Find Your Perfect Match
+            Exclusive Models
           </h1>
           <p className="text-xl md:text-2xl text-center mb-8 text-purple-100">
             Connect with professional models for your next project
@@ -82,7 +91,7 @@ const Index = () => {
                 <img
                   src={model.imageUrl}
                   alt={model.name}
-                  className="w-full h-64 object-cover"
+                  className="w-full h-96 object-cover"
                 />
                 <div className="absolute top-4 right-4">
                   <Button
@@ -93,19 +102,29 @@ const Index = () => {
                     <Heart className="h-5 w-5" />
                   </Button>
                 </div>
-              </div>
-              <CardHeader>
-                <div className="flex justify-between items-center">
-                  <div>
-                    <CardTitle className="text-2xl text-purple-800">{model.name}</CardTitle>
-                    <p className="text-sm text-gray-500">{model.age} • {model.location}</p>
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
+                  <h3 className="text-2xl font-semibold text-white mb-1">{model.name}</h3>
+                  <div className="flex items-center text-white/90 gap-2 text-sm">
+                    <MapPin className="h-4 w-4" />
+                    <span>{model.location}</span>
+                    <span className="text-white/60">•</span>
+                    <span>{model.age} years</span>
+                    <span className="text-white/60">•</span>
+                    <div className="flex items-center">
+                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 mr-1" />
+                      <span>{model.rating}</span>
+                    </div>
                   </div>
                 </div>
-                <CardDescription className="text-gray-600">
-                  {model.description}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
+              </div>
+              <CardContent className="p-6">
+                <div className="mb-4">
+                  <div className="text-sm text-gray-600 mb-2">
+                    <span className="font-semibold">Height:</span> {model.height} | 
+                    <span className="font-semibold ml-2">Measurements:</span> {model.measurements}
+                  </div>
+                  <p className="text-gray-700">{model.description}</p>
+                </div>
                 <div className="flex flex-wrap gap-2 mb-4">
                   {model.interests.map((interest, index) => (
                     <span
@@ -121,7 +140,7 @@ const Index = () => {
                     R${model.hourlyRate}/hr
                   </span>
                   <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
-                    Connect Now
+                    Book Now
                   </Button>
                 </div>
               </CardContent>
