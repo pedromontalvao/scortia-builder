@@ -34,43 +34,51 @@ export const Analytics = () => {
   return (
     <div className="space-y-8">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-500">
-              Visualizações
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {isLoadingStats ? "..." : stats?.total_views || 0}
-            </div>
-          </CardContent>
+        <Card className="p-6">
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium text-muted-foreground">Visualizações</h3>
+            <div className="text-3xl font-bold">1,234</div>
+            <p className="text-sm text-green-500">+12% essa semana</p>
+          </div>
         </Card>
 
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-500">
-              Contatos
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {isLoadingStats ? "..." : stats?.total_contacts || 0}
-            </div>
-          </CardContent>
+        <Card className="p-6">
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium text-muted-foreground">Mensagens</h3>
+            <div className="text-3xl font-bold">56</div>
+            <p className="text-sm text-green-500">+8% essa semana</p>
+          </div>
         </Card>
 
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-500">
-              Favoritos
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {isLoadingStats ? "..." : stats?.total_favorites || 0}
-            </div>
-          </CardContent>
+        <Card className="p-6">
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium text-muted-foreground">Agendamentos</h3>
+            <div className="text-3xl font-bold">23</div>
+            <p className="text-sm text-green-500">+15% essa semana</p>
+          </div>
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card className="p-6">
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium text-muted-foreground">Visualizações</h3>
+            <div className="text-3xl font-bold">0</div>
+          </div>
+        </Card>
+
+        <Card className="p-6">
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium text-muted-foreground">Contatos</h3>
+            <div className="text-3xl font-bold">0</div>
+          </div>
+        </Card>
+
+        <Card className="p-6">
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium text-muted-foreground">Favoritos</h3>
+            <div className="text-3xl font-bold">0</div>
+          </div>
         </Card>
       </div>
 

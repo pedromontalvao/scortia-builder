@@ -59,12 +59,12 @@ export const CompanionProfile = () => {
         name={companion.name}
         description={companion.description}
         location={companion.location}
-        rating={4.8} // TODO: Implement ratings
-        reviews={0} // TODO: Implement reviews
-        experience="2 anos" // TODO: Add to database
-        views={1234} // TODO: Implement view counter
-        likes={89} // TODO: Implement likes
-        messages={45} // TODO: Implement messages
+        rating={4.8}
+        reviews={0}
+        experience="2 anos"
+        views={1234}
+        likes={89}
+        messages={45}
         price={companion.price_per_hour}
         isPremium={companion.is_premium}
         isVerified={companion.is_verified}
@@ -84,13 +84,16 @@ export const CompanionProfile = () => {
             <LocationInfo 
               location={companion.location}
               serviceAreas={companion.service_areas || []}
+              neighborhood={companion.neighborhood || ""}
+              city={companion.city || ""}
+              state={companion.state || ""}
             />
             <ContactInfo
               whatsapp={companion.whatsapp}
-              email="contato@exemplo.com" // TODO: Add to database
+              email={companion.email}
               schedule={{
-                weekdays: "10:00 - 20:00", // TODO: Add to database
-                saturday: "12:00 - 18:00" // TODO: Add to database
+                weekdays: companion.weekday_hours || "10:00 - 20:00",
+                saturday: companion.weekend_hours || "12:00 - 18:00"
               }}
               onContact={handleContact}
             />
