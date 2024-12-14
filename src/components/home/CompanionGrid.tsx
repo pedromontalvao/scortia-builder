@@ -6,6 +6,8 @@ interface CompanionGridProps {
 }
 
 export const CompanionGrid = ({ companions, viewMode }: CompanionGridProps) => {
+  console.log("Companions data:", companions);
+  
   return (
     <div className={`grid ${
       viewMode === "grid" ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"
@@ -15,7 +17,9 @@ export const CompanionGrid = ({ companions, viewMode }: CompanionGridProps) => {
           key={companion.id}
           id={companion.id}
           name={companion.name}
-          location={`${companion.city}, ${companion.state}`}
+          neighborhood={companion.neighborhood}
+          city={companion.city}
+          state={companion.state}
           rating={companion.rating || 0}
           reviews={companion.reviews || 0}
           price={companion.price || 0}

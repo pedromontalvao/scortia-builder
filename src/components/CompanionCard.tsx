@@ -14,20 +14,27 @@ interface CompanionCardProps {
   imageUrl: string;
   isPremium?: boolean;
   isVerified?: boolean;
+  neighborhood?: string;
+  city?: string;
+  state?: string;
 }
 
 export const CompanionCard = ({
   id,
   name,
-  location,
   rating,
   reviews,
   price,
   services,
   imageUrl,
   isPremium,
-  isVerified
+  isVerified,
+  neighborhood,
+  city,
+  state
 }: CompanionCardProps) => {
+  const locationString = [neighborhood, city, state].filter(Boolean).join(", ");
+
   return (
     <Link to={`/acompanhante/${id}`}>
       <Card className="group overflow-hidden transition-all hover:shadow-lg">
@@ -57,7 +64,7 @@ export const CompanionCard = ({
           
           <div className="flex items-center gap-1 text-gray-500 mb-2">
             <MapPin className="w-4 h-4" />
-            <span>{location}</span>
+            <span>{locationString}</span>
           </div>
           
           <div className="flex flex-wrap gap-2 mb-3">

@@ -14,8 +14,13 @@ const Index = () => {
   const [filters, setFilters] = useState({
     searchTerm: "",
     priceRange: [0, 1000],
-    ageRange: [18, 60],
-    distance: 50,
+    services: [] as string[],
+    state: "",
+    city: "",
+    neighborhood: "",
+    ethnicity: "",
+    bodyType: "",
+    hairColor: "",
   });
 
   const { data: companions, isLoading } = useQuery({
@@ -35,17 +40,41 @@ const Index = () => {
         .order('created_at', { ascending: false });
 
       if (filters.searchTerm) {
-        query = query.or(`
-          name.ilike.%${filters.searchTerm}%,
-          city.ilike.%${filters.searchTerm}%,
-          services.cs.{${filters.searchTerm}}
-        `);
+        query = query.or(`name.ilike.%${filters.searchTerm}%,city.ilike.%${filters.searchTerm}%`);
+      }
+
+      if (filters.state) {
+        query = query.eq('state', filters.state);
+      }
+
+      if (filters.city) {
+        query = query.eq('city', filters.city);
+      }
+
+      if (filters.neighborhood) {
+        query = query.eq('neighborhood', filters.neighborhood);
       }
 
       if (filters.priceRange) {
         query = query
           .gte('price', filters.priceRange[0])
           .lte('price', filters.priceRange[1]);
+      }
+
+      if (filters.services.length > 0) {
+        query = query.contains('services', filters.services);
+      }
+
+      if (filters.ethnicity) {
+        query = query.eq('ethnicity', filters.ethnicity);
+      }
+
+      if (filters.bodyType) {
+        query = query.eq('body_type', filters.bodyType);
+      }
+
+      if (filters.hairColor) {
+        query = query.eq('hair_color', filters.hairColor);
       }
 
       const { data, error } = await query;
