@@ -14,6 +14,7 @@ import { VerificationRequest } from "@/components/companion/dashboard/Verificati
 import { Analytics } from "@/components/companion/dashboard/Analytics";
 import { Subscription } from "@/components/companion/dashboard/Subscription";
 import VarzeaGrande from "./pages/cities/VarzeaGrande";
+import { CompanionRegistrationForm } from "@/components/companion/registration/CompanionRegistrationForm";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -36,6 +37,7 @@ const App = () => {
               <Route path="/" element={<Index />} />
               <Route path="/varzea-grande" element={<VarzeaGrande />} />
               <Route path="/acompanhante/:id" element={<CompanionProfile />} />
+              <Route path="/cadastro-acompanhante" element={<CompanionRegistrationForm />} />
               <Route path="/painel" element={<CompanionDashboard />}>
                 <Route path="midia" element={<MediaManager />} />
                 <Route path="verificacao" element={<VerificationRequest />} />
