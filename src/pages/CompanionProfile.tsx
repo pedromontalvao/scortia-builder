@@ -5,70 +5,51 @@ import { Measurements } from "@/components/companion/Measurements";
 import { LocationInfo } from "@/components/companion/LocationInfo";
 import { PhotoGallery } from "@/components/companion/PhotoGallery";
 import { ServicesAndPrices } from "@/components/companion/ServicesAndPrices";
-
-// Static data for demo companions
-const demoCompanions = {
-  'comp-001': {
-    id: 'comp-001',
-    name: 'Isabela Santos',
-    description: 'Olá! Sou a Isabela, uma acompanhante de luxo em Cuiabá. Carinhosa e elegante, busco proporcionar momentos únicos e inesquecíveis.',
-    neighborhood: 'Centro Sul',
-    city: 'Cuiabá',
-    state: 'MT',
-    rating: 4.9,
-    reviews: 156,
-    experience: '2 anos',
-    views: 1234,
-    likes: 89,
-    messages: 45,
-    price: 400,
-    isPremium: true,
-    isVerified: true,
-    imageUrl: '/demo/isabela1.jpg',
-    photos: ['/demo/isabela1.jpg', '/demo/isabela2.jpg', '/demo/isabela3.jpg'],
-    personal_info: {
-      age: '23 anos',
-      height: '1.68m',
-      weight: '58kg',
-      hair: 'Preto',
-      eyes: 'Castanhos',
-      physique: 'Curvilínea'
-    },
-    measurements: {
-      bust: '92cm',
-      waist: '60cm',
-      hips: '92cm'
-    },
-    services: [
-      {
-        title: 'Encontro Casual',
-        duration: '1 hora',
-        price: 400,
-        description: 'Encontro casual com muito carinho e sensualidade'
-      },
-      {
-        title: 'Jantar ou Evento',
-        duration: '4 horas',
-        price: 1200,
-        description: 'Acompanhamento em jantares ou eventos sociais'
-      },
-      {
-        title: 'Pernoite',
-        duration: '12 horas',
-        price: 2000,
-        description: 'Acompanhamento completo durante toda a noite'
-      }
-    ],
-    service_areas: ['Centro Sul', 'Centro Norte', 'Jardim das Américas', 'Santa Rosa']
-  },
-  'comp-002': {
-    // ... similar structure for other companions
-  }
-};
+import { ContactInfo } from "@/components/companion/ContactInfo";
+import { useToast } from "@/hooks/use-toast";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/lib/supabase";
 
 export const CompanionProfile = () => {
   const { id } = useParams();
-  const companion = demoCompanions[id as keyof typeof demoCompanions];
+  const { toast } = useToast();
+
+  const { data: companion, isLoading } = useQuery({
+    queryKey: ['companion', id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('companions')
+        .select(`
+          *,
+          companion_photos(url, is_primary),
+          companion_services(title, duration, price, description)
+        `)
+        .eq('id', id)
+        .single();
+
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  const handleContact = () => {
+    if (!companion?.whatsapp) {
+      toast({
+        title: "Erro",
+        description: "Número de WhatsApp não disponível",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const message = `Olá ${companion.name}, vi seu perfil no site e gostaria de mais informações.`;
+    const whatsappUrl = `https://wa.me/55${companion.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
+  if (isLoading) {
+    return <div>Carregando...</div>;
+  }
 
   if (!companion) {
     return (
@@ -80,6 +61,8 @@ export const CompanionProfile = () => {
       </div>
     );
   }
+
+  const primaryPhoto = companion.companion_photos?.find(photo => photo.is_primary)?.url || companion.companion_photos?.[0]?.url;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -94,9 +77,9 @@ export const CompanionProfile = () => {
         likes={companion.likes}
         messages={companion.messages}
         price={companion.price}
-        isPremium={companion.isPremium}
-        isVerified={companion.isVerified}
-        imageUrl={companion.imageUrl}
+        isPremium={companion.is_premium}
+        isVerified={companion.is_verified}
+        imageUrl={primaryPhoto}
       />
 
       <main className="container mx-auto px-4 py-8">
@@ -104,11 +87,22 @@ export const CompanionProfile = () => {
           <div className="md:col-span-2 space-y-8">
             <PersonalInfo {...companion.personal_info} />
             <Measurements {...companion.measurements} />
-            <PhotoGallery photos={companion.photos} />
-            <ServicesAndPrices services={companion.services} />
+            <PhotoGallery photos={companion.companion_photos?.map(photo => photo.url) || []} />
+            {companion.companion_services && companion.companion_services.length > 0 && (
+              <ServicesAndPrices services={companion.companion_services} />
+            )}
           </div>
 
           <div className="space-y-8">
+            <ContactInfo
+              whatsapp={companion.whatsapp}
+              email={companion.email}
+              schedule={{
+                weekdays: companion.weekday_hours || "Sob consulta",
+                saturday: companion.weekend_hours || "Sob consulta"
+              }}
+              onContact={handleContact}
+            />
             <LocationInfo
               location={`${companion.neighborhood}, ${companion.city} - ${companion.state}`}
               serviceAreas={companion.service_areas}

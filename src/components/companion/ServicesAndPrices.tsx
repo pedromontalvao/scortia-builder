@@ -36,10 +36,6 @@ export const ServicesAndPrices = ({ services }: ServicesAndPricesProps) => {
             </div>
           ))}
         </div>
-        
-        <p className="text-sm text-gray-500 mt-4">
-          * Os valores podem variar de acordo com o local e horário. Entre em contato para mais informações e condições especiais.
-        </p>
       </CardContent>
     </Card>
   );
