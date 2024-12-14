@@ -4,12 +4,54 @@ import { CompanionGrid } from "@/components/home/CompanionGrid";
 import { SearchFilters } from "@/components/home/SearchFilters";
 import { useState } from 'react';
 
+// Demo data for Várzea Grande
+const demoCompanions = [
+  {
+    id: "vg-001",
+    name: "Juliana Santos",
+    rating: 4.8,
+    reviews: 15,
+    price: 300,
+    services: ["Massagem", "Jantar", "Eventos"],
+    companion_photos: [{ url: "/demo/juliana-1.jpg" }],
+    is_premium: true,
+    is_verified: true,
+    neighborhood: "Centro",
+    city: "Várzea Grande",
+    state: "MT"
+  },
+  {
+    id: "vg-002",
+    name: "Mariana Costa",
+    rating: 4.7,
+    reviews: 12,
+    price: 250,
+    services: ["Massagem", "Eventos"],
+    companion_photos: [{ url: "/demo/mariana-1.jpg" }],
+    is_premium: false,
+    is_verified: true,
+    neighborhood: "Cristo Rei",
+    city: "Várzea Grande",
+    state: "MT"
+  },
+  {
+    id: "vg-003",
+    name: "Patricia Lima",
+    rating: 4.9,
+    reviews: 20,
+    price: 350,
+    services: ["Jantar", "Eventos", "Viagens"],
+    companion_photos: [{ url: "/demo/patricia-1.jpg" }],
+    is_premium: true,
+    is_verified: true,
+    neighborhood: "Nova Várzea Grande",
+    city: "Várzea Grande",
+    state: "MT"
+  }
+];
+
 const VarzeaGrande = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  
-  const filteredCompanions = demoCompanions.filter(
-    companion => companion.city === "Várzea Grande"
-  );
 
   const handleSearch = (filters: any) => {
     console.log("Search filters:", filters);
@@ -31,7 +73,7 @@ const VarzeaGrande = () => {
           setViewMode={setViewMode} 
           onSearch={handleSearch}
         />
-        <CompanionGrid companions={filteredCompanions} viewMode={viewMode} />
+        <CompanionGrid companions={demoCompanions} viewMode={viewMode} />
       </main>
     </div>
   );

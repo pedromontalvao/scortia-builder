@@ -95,13 +95,13 @@ export const CompanionProfile = () => {
               email={companion.email}
               schedule={{
                 weekdays: companion.weekday_hours || "Sob consulta",
-                weekend: companion.weekend_hours || "Sob consulta"
+                saturday: companion.weekend_hours || "Sob consulta"
               }}
               onContact={handleContact}
             />
             <LocationInfo
               location={`${companion.neighborhood}, ${companion.city} - ${companion.state}`}
-              serviceAreas={companion.service_areas}
+              serviceAreas={companion.service_areas || []}
               neighborhood={companion.neighborhood}
               city={companion.city}
               state={companion.state}
