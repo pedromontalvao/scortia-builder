@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { CompanionGrid } from "@/components/home/CompanionGrid";
 import { SearchFilters } from "@/components/home/SearchFilters";
 import { HeroSection } from "@/components/HeroSection";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 
 interface IndexProps {
   city?: string;
@@ -96,6 +98,7 @@ const Index: React.FC<IndexProps> = ({ city }) => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Header />
       <HeroSection />
       <main className="container mx-auto px-4 py-8">
         <SearchFilters 
@@ -105,6 +108,7 @@ const Index: React.FC<IndexProps> = ({ city }) => {
         />
         <CompanionGrid companions={filteredCompanions} viewMode={viewMode} />
       </main>
+      <Footer />
     </div>
   );
 };
