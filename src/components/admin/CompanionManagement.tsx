@@ -4,20 +4,28 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { UserCheck, UserX, Crown } from "lucide-react";
+import { UserCheck, UserX, Crown, Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
+import { Input } from "@/components/ui/input";
 
 export const CompanionManagement = () => {
   const { toast } = useToast();
+  const [searchTerm, setSearchTerm] = useState("");
   
   const { data: companions, isLoading, refetch } = useQuery({
     queryKey: ['companions'],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from('companions')
         .select('*')
         .order('created_at', { ascending: false });
+      
+      if (searchTerm) {
+        query = query.ilike('name', `%${searchTerm}%`);
+      }
+      
+      const { data, error } = await query;
       
       if (error) throw error;
       return data;
@@ -97,6 +105,18 @@ export const CompanionManagement = () => {
   return (
     <Card>
       <CardContent className="p-6">
+        <div className="mb-6">
+          <div className="relative">
+            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Buscar acompanhante..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-8"
+            />
+          </div>
+        </div>
+
         <Table>
           <TableHeader>
             <TableRow>
@@ -112,7 +132,7 @@ export const CompanionManagement = () => {
               <TableRow key={companion.id}>
                 <TableCell className="font-medium">{companion.name}</TableCell>
                 <TableCell>{companion.whatsapp}</TableCell>
-                <TableCell>{companion.location}</TableCell>
+                <TableCell>{`${companion.neighborhood}, ${companion.city} - ${companion.state}`}</TableCell>
                 <TableCell>
                   <div className="flex gap-2">
                     {companion.is_verified && (
