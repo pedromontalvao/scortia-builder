@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserManagement } from "@/components/admin/UserManagement";
-import { ContentModeration } from "@/components/admin/ContentModeration";
+import { CompanionManagement } from "@/components/admin/CompanionManagement";
 import { Analytics } from "@/components/admin/Analytics";
-import { SubscriptionManagement } from "@/components/admin/SubscriptionManagement";
 import { Support } from "@/components/admin/Support";
 
 export const AdminDashboard = () => {
-  const [activeTab, setActiveTab] = useState("users");
+  const [activeTab, setActiveTab] = useState("companions");
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -16,23 +15,18 @@ export const AdminDashboard = () => {
         
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="mb-8">
+            <TabsTrigger value="companions">Acompanhantes</TabsTrigger>
             <TabsTrigger value="users">Usuários</TabsTrigger>
-            <TabsTrigger value="content">Moderação</TabsTrigger>
-            <TabsTrigger value="subscriptions">Assinaturas</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
             <TabsTrigger value="support">Suporte</TabsTrigger>
           </TabsList>
 
+          <TabsContent value="companions">
+            <CompanionManagement />
+          </TabsContent>
+
           <TabsContent value="users">
             <UserManagement />
-          </TabsContent>
-
-          <TabsContent value="content">
-            <ContentModeration />
-          </TabsContent>
-
-          <TabsContent value="subscriptions">
-            <SubscriptionManagement />
           </TabsContent>
 
           <TabsContent value="analytics">
