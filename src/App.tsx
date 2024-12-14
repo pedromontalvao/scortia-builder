@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import { CompanionProfile } from "./pages/CompanionProfile";
 import { CompanionDashboard } from "./pages/companion/Dashboard";
+import { AdminDashboard } from "./pages/admin/Dashboard";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -30,6 +31,7 @@ const App = () => {
               <Route path="/" element={<Index />} />
               <Route path="/acompanhante/:id" element={<CompanionProfile />} />
               <Route path="/painel" element={<CompanionDashboard />} />
+              <Route path="/admin" element={<AdminDashboard />} />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>
