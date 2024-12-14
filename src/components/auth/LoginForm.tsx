@@ -4,35 +4,54 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/lib/supabase";
 
 export const LoginForm = ({ onClose }: { onClose: () => void }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     
-    // For demo purposes, hardcoded test user
-    if (email === "test@test.com" && password === "pedrorodrigues") {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) throw error;
+
+      // Get user type from metadata
+      const userType = data.user?.user_metadata?.user_type || "client";
+      
       toast({
         title: "Login realizado com sucesso!",
         description: "Bem-vindo(a) de volta!"
       });
       
-      // Store user type in localStorage for demo
-      localStorage.setItem("userType", "companion");
+      localStorage.setItem("userType", userType);
       localStorage.setItem("isLoggedIn", "true");
       
       onClose();
-      navigate("/painel");
-    } else {
+      
+      if (userType === "companion") {
+        navigate("/painel");
+      } else {
+        navigate("/");
+      }
+    } catch (error) {
+      console.error('Login error:', error);
       toast({
         title: "Erro no login",
         description: "Email ou senha incorretos",
         variant: "destructive"
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -60,8 +79,8 @@ export const LoginForm = ({ onClose }: { onClose: () => void }) => {
         />
       </div>
       
-      <Button type="submit" className="w-full">
-        Entrar
+      <Button type="submit" className="w-full" disabled={isLoading}>
+        {isLoading ? "Entrando..." : "Entrar"}
       </Button>
     </form>
   );
