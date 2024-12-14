@@ -5,6 +5,8 @@ import { LocationInfo } from "@/components/companion/LocationInfo";
 import { PhotoGallery } from "@/components/companion/PhotoGallery";
 import { ServicesAndPrices } from "@/components/companion/ServicesAndPrices";
 import { ContactInfo } from "@/components/companion/ContactInfo";
+import { AudioSection } from "@/components/companion/AudioSection";
+import { Measurements } from "@/components/companion/Measurements";
 import { NotFoundState } from "@/components/companion/NotFoundState";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery } from "@tanstack/react-query";
@@ -14,9 +16,10 @@ export const CompanionProfile = () => {
   const { id } = useParams();
   const { toast } = useToast();
 
-  const { data: companion, isLoading } = useQuery({
+  const { data: companion, isLoading, error } = useQuery({
     queryKey: ['companion', id],
     queryFn: async () => {
+      console.log('Fetching companion data for ID:', id);
       const { data, error } = await supabase
         .from('companions')
         .select(`
@@ -27,7 +30,12 @@ export const CompanionProfile = () => {
         .eq('id', id)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching companion:', error);
+        throw error;
+      }
+      
+      console.log('Fetched companion data:', data);
       return data;
     }
   });
@@ -55,7 +63,7 @@ export const CompanionProfile = () => {
     );
   }
 
-  if (!companion) {
+  if (error || !companion) {
     return <NotFoundState />;
   }
 
@@ -65,46 +73,73 @@ export const CompanionProfile = () => {
     <div className="min-h-screen bg-gray-50">
       <ProfileHeader
         name={companion.name}
-        description={companion.description}
+        description={companion.description || ""}
         location={`${companion.neighborhood}, ${companion.city} - ${companion.state}`}
-        rating={companion.rating}
-        reviews={companion.reviews}
-        experience={companion.experience}
-        views={companion.views}
-        likes={companion.likes}
-        messages={companion.messages}
-        price={companion.price}
-        isPremium={companion.is_premium}
-        isVerified={companion.is_verified}
-        imageUrl={primaryPhoto}
+        rating={companion.rating || 0}
+        reviews={companion.reviews || 0}
+        experience={companion.experience || "Nova"}
+        views={companion.views || 0}
+        likes={companion.likes || 0}
+        messages={companion.messages || 0}
+        price={companion.price || 0}
+        isPremium={companion.is_premium || false}
+        isVerified={companion.is_verified || false}
+        imageUrl={primaryPhoto || "/placeholder.svg"}
       />
 
       <main className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="md:col-span-2 space-y-8">
-            <PersonalInfo {...companion.personal_info} />
-            <PhotoGallery photos={companion.companion_photos?.map(photo => photo.url) || []} />
+            <PersonalInfo
+              age={companion.age || ""}
+              height={companion.height || ""}
+              weight={companion.weight || ""}
+              hair={companion.hair_color || ""}
+              eyes={companion.eye_color || ""}
+              physique={companion.body_type || ""}
+            />
+            
+            <Measurements
+              bust={companion.bust || ""}
+              waist={companion.waist || ""}
+              hips={companion.hips || ""}
+            />
+            
+            <PhotoGallery 
+              photos={companion.companion_photos?.map(photo => photo.url) || []} 
+            />
+            
             {companion.companion_services && companion.companion_services.length > 0 && (
-              <ServicesAndPrices services={companion.companion_services} />
+              <ServicesAndPrices 
+                services={companion.companion_services} 
+              />
+            )}
+            
+            {(companion.presentation_audio || companion.voice_message) && (
+              <AudioSection
+                presentationAudio={companion.presentation_audio || ""}
+                voiceMessageAudio={companion.voice_message || ""}
+              />
             )}
           </div>
 
           <div className="space-y-8">
             <ContactInfo
-              whatsapp={companion.whatsapp}
-              email={companion.email}
+              whatsapp={companion.whatsapp || ""}
+              email={companion.email || ""}
               schedule={{
                 weekdays: companion.weekday_hours || "Sob consulta",
                 saturday: companion.weekend_hours || "Sob consulta"
               }}
               onContact={handleContact}
             />
+            
             <LocationInfo
               location={`${companion.neighborhood}, ${companion.city} - ${companion.state}`}
               serviceAreas={companion.service_areas || []}
-              neighborhood={companion.neighborhood}
-              city={companion.city}
-              state={companion.state}
+              neighborhood={companion.neighborhood || ""}
+              city={companion.city || ""}
+              state={companion.state || ""}
             />
           </div>
         </div>
