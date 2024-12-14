@@ -1,13 +1,23 @@
 import { Card, CardContent } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { MapPin } from "lucide-react";
+import { LocationMap } from "./LocationMap";
 
 interface LocationInfoProps {
   location: string;
   serviceAreas: string[];
+  neighborhood: string;
+  city: string;
+  state: string;
 }
 
-export const LocationInfo = ({ location, serviceAreas }: LocationInfoProps) => {
+export const LocationInfo = ({ 
+  location, 
+  serviceAreas,
+  neighborhood,
+  city,
+  state 
+}: LocationInfoProps) => {
   return (
     <Card>
       <CardContent className="p-6">
@@ -19,6 +29,14 @@ export const LocationInfo = ({ location, serviceAreas }: LocationInfoProps) => {
         <div className="mb-6">
           <p className="text-gray-500">Local</p>
           <p className="font-medium">{location}</p>
+        </div>
+        
+        <div className="mb-6">
+          <LocationMap
+            neighborhood={neighborhood}
+            city={city}
+            state={state}
+          />
         </div>
         
         <div>
