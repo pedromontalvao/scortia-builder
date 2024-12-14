@@ -6,7 +6,6 @@ import { Link } from "react-router-dom";
 interface CompanionCardProps {
   id: string;
   name: string;
-  location: string;
   rating: number;
   reviews: number;
   price: number;
