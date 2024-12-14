@@ -1,16 +1,21 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { DashboardNav } from "@/components/companion/dashboard/DashboardNav";
-import { ProfileSettings } from "@/components/companion/dashboard/ProfileSettings";
-import { MediaManager } from "@/components/companion/dashboard/MediaManager";
-import { VerificationRequest } from "@/components/companion/dashboard/VerificationRequest";
-import { Subscription } from "@/components/companion/dashboard/Subscription";
-import { Analytics } from "@/components/companion/dashboard/Analytics";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
+import { Outlet, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 export const CompanionDashboard = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const navigate = useNavigate();
+
+  // Redirect to /painel/configuracoes if on /painel
+  useEffect(() => {
+    if (window.location.pathname === '/painel') {
+      navigate('/painel/configuracoes');
+    }
+  }, [navigate]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -70,8 +75,7 @@ export const CompanionDashboard = () => {
             </div>
 
             <div className="space-y-8">
-              <ProfileSettings />
-              <Analytics />
+              <Outlet />
             </div>
           </div>
         </main>

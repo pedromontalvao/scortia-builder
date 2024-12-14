@@ -1,38 +1,77 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/lib/supabase";
 
 export const Analytics = () => {
-  // Mock data - in a real app this would come from an API
-  const data = [
-    { name: 'Jan', views: 400 },
-    { name: 'Fev', views: 300 },
-    { name: 'Mar', views: 600 },
-    { name: 'Abr', views: 800 },
-    { name: 'Mai', views: 700 },
-    { name: 'Jun', views: 900 },
-  ];
+  const { data: viewsData, isLoading: isLoadingViews } = useQuery({
+    queryKey: ['companion-views'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('companion_views')
+        .select('*')
+        .order('date', { ascending: true })
+        .limit(30);
+      
+      if (error) throw error;
+      return data;
+    }
+  });
 
-  const stats = [
-    { label: 'Visualizações', value: '1.2k' },
-    { label: 'Contatos', value: '234' },
-    { label: 'Favoritos', value: '56' },
-  ];
+  const { data: stats, isLoading: isLoadingStats } = useQuery({
+    queryKey: ['companion-stats'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('companion_stats')
+        .select('*')
+        .single();
+      
+      if (error) throw error;
+      return data;
+    }
+  });
 
   return (
     <div className="space-y-8">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {stats.map((stat, index) => (
-          <Card key={index}>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-500">
-                {stat.label}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
-            </CardContent>
-          </Card>
-        ))}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-gray-500">
+              Visualizações
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {isLoadingStats ? "..." : stats?.total_views || 0}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-gray-500">
+              Contatos
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {isLoadingStats ? "..." : stats?.total_contacts || 0}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-gray-500">
+              Favoritos
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {isLoadingStats ? "..." : stats?.total_favorites || 0}
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       <Card>
@@ -42,9 +81,9 @@ export const Analytics = () => {
         <CardContent>
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={data}>
+              <BarChart data={viewsData}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
+                <XAxis dataKey="date" />
                 <YAxis />
                 <Tooltip />
                 <Bar dataKey="views" fill="#ec4899" />

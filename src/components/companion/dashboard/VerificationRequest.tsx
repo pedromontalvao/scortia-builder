@@ -4,30 +4,79 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Camera, Upload } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/lib/supabase";
+import { useMutation } from "@tanstack/react-query";
 
 export const VerificationRequest = () => {
   const [selfieFile, setSelfieFile] = useState<File | null>(null);
   const [idFile, setIdFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!selfieFile || !idFile) {
+  const verificationMutation = useMutation({
+    mutationFn: async () => {
+      if (!selfieFile || !idFile) {
+        throw new Error("Por favor, envie todas as fotos necessárias.");
+      }
+
+      setUploading(true);
+
+      // Upload selfie
+      const selfiePath = `verification/${Date.now()}-selfie.${selfieFile.name.split('.').pop()}`;
+      const { error: selfieError } = await supabase.storage
+        .from('verification')
+        .upload(selfiePath, selfieFile);
+
+      if (selfieError) throw selfieError;
+
+      // Upload ID
+      const idPath = `verification/${Date.now()}-id.${idFile.name.split('.').pop()}`;
+      const { error: idError } = await supabase.storage
+        .from('verification')
+        .upload(idPath, idFile);
+
+      if (idError) throw idError;
+
+      // Create verification request
+      const { error: requestError } = await supabase
+        .from('verification_requests')
+        .insert([
+          {
+            selfie_url: selfiePath,
+            id_url: idPath,
+            status: 'pending'
+          }
+        ]);
+
+      if (requestError) throw requestError;
+
+      return { success: true };
+    },
+    onSuccess: () => {
+      toast({
+        title: "Solicitação Enviada",
+        description: "Sua solicitação de verificação foi enviada com sucesso! Analisaremos em até 48 horas.",
+      });
+      setSelfieFile(null);
+      setIdFile(null);
+    },
+    onError: (error) => {
+      console.error('Verification error:', error);
       toast({
         title: "Erro",
-        description: "Por favor, envie todas as fotos necessárias.",
+        description: "Ocorreu um erro ao enviar sua solicitação. Tente novamente.",
         variant: "destructive"
       });
-      return;
-    }
+    },
+    onSettled: () => {
+      setUploading(false);
+    },
+  });
 
-    // Here we would handle the verification request submission
-    toast({
-      title: "Solicitação Enviada",
-      description: "Sua solicitação de verificação foi enviada com sucesso! Analisaremos em até 48 horas.",
-    });
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    verificationMutation.mutate();
   };
 
   return (
@@ -70,6 +119,7 @@ export const VerificationRequest = () => {
                         accept="image/*"
                         className="hidden"
                         onChange={(e) => e.target.files?.[0] && setSelfieFile(e.target.files[0])}
+                        disabled={uploading}
                       />
                     </div>
                   )}
@@ -109,6 +159,7 @@ export const VerificationRequest = () => {
                         accept="image/*"
                         className="hidden"
                         onChange={(e) => e.target.files?.[0] && setIdFile(e.target.files[0])}
+                        disabled={uploading}
                       />
                     </div>
                   )}
@@ -117,8 +168,12 @@ export const VerificationRequest = () => {
             </div>
           </div>
 
-          <Button type="submit" className="w-full">
-            Enviar Solicitação
+          <Button 
+            type="submit" 
+            className="w-full"
+            disabled={!selfieFile || !idFile || uploading}
+          >
+            {uploading ? "Enviando..." : "Enviar Solicitação"}
           </Button>
         </form>
       </CardContent>

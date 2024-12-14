@@ -8,12 +8,16 @@ import Index from "./pages/Index";
 import { CompanionProfile } from "./pages/CompanionProfile";
 import { CompanionDashboard } from "./pages/companion/Dashboard";
 import { AdminDashboard } from "./pages/admin/Dashboard";
+import { ProfileSettings } from "@/components/companion/dashboard/ProfileSettings";
+import { MediaManager } from "@/components/companion/dashboard/MediaManager";
+import { VerificationRequest } from "@/components/companion/dashboard/VerificationRequest";
+import { Analytics } from "@/components/companion/dashboard/Analytics";
+import { Subscription } from "@/components/companion/dashboard/Subscription";
 
-// Create a client
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5 * 60 * 1000, // 5 minutes
+      staleTime: 5 * 60 * 1000,
       retry: 1,
     },
   },
@@ -30,7 +34,13 @@ const App = () => {
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/acompanhante/:id" element={<CompanionProfile />} />
-              <Route path="/painel" element={<CompanionDashboard />} />
+              <Route path="/painel" element={<CompanionDashboard />}>
+                <Route path="midia" element={<MediaManager />} />
+                <Route path="verificacao" element={<VerificationRequest />} />
+                <Route path="assinatura" element={<Subscription />} />
+                <Route path="analytics" element={<Analytics />} />
+                <Route path="configuracoes" element={<ProfileSettings />} />
+              </Route>
               <Route path="/admin" element={<AdminDashboard />} />
             </Routes>
           </BrowserRouter>

@@ -1,22 +1,14 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
-  LayoutDashboard,
   Image,
   UserCheck,
   Crown,
   BarChart,
-  MessageSquare,
-  Calendar,
   Settings,
 } from "lucide-react";
 
 const navItems = [
-  {
-    title: "Visão Geral",
-    href: "/painel",
-    icon: LayoutDashboard,
-  },
   {
     title: "Mídia",
     href: "/painel/midia",
@@ -36,17 +28,6 @@ const navItems = [
     title: "Analytics",
     href: "/painel/analytics",
     icon: BarChart,
-  },
-  {
-    title: "Mensagens",
-    href: "/painel/mensagens",
-    icon: MessageSquare,
-    badge: 3,
-  },
-  {
-    title: "Agenda",
-    href: "/painel/agenda",
-    icon: Calendar,
   },
   {
     title: "Configurações",
@@ -75,11 +56,6 @@ export const DashboardNav = () => {
           >
             <Icon className="h-4 w-4" />
             <span>{item.title}</span>
-            {item.badge && (
-              <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-pink-500 text-xs text-white">
-                {item.badge}
-              </span>
-            )}
           </Link>
         );
       })}
