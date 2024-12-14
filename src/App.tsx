@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import { CompanionProfile } from "./pages/CompanionProfile";
+import { CompanionDashboard } from "./pages/companion/Dashboard";
 
 const queryClient = new QueryClient();
 
@@ -17,6 +18,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/acompanhante/:id" element={<CompanionProfile />} />
+          <Route path="/painel" element={<CompanionDashboard />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
