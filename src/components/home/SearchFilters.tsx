@@ -2,9 +2,10 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
 import { Grid, List, Search } from "lucide-react";
+import { ServiceFilters } from "./filters/ServiceFilters";
+import { CharacteristicsFilters } from "./filters/CharacteristicsFilters";
+import { LocationFilters } from "./filters/LocationFilters";
 
 interface SearchFiltersProps {
   viewMode: "grid" | "list";
@@ -14,31 +15,36 @@ interface SearchFiltersProps {
 
 export const SearchFilters = ({ viewMode, setViewMode, onSearch }: SearchFiltersProps) => {
   const [showFilters, setShowFilters] = useState(false);
-  const [priceRange, setPriceRange] = useState([0, 1000]);
-  const [ageRange, setAgeRange] = useState([18, 60]);
-  const [distance, setDistance] = useState([50]);
   const [searchTerm, setSearchTerm] = useState("");
-
-  const quickFilters = [
-    "Com áudio",
-    "Em expediente",
-    "Online",
-    "Fotos com rosto",
-    "Com local",
-    "Jovem",
-    "A domicílio",
-    "Aceita viajar",
-    "Festas e eventos",
-    "Hotéis"
-  ];
+  const [priceRange, setPriceRange] = useState([0, 1000]);
+  const [selectedServices, setSelectedServices] = useState<string[]>([]);
+  const [selectedState, setSelectedState] = useState("");
+  const [selectedCity, setSelectedCity] = useState("");
+  const [selectedNeighborhood, setSelectedNeighborhood] = useState("");
+  const [selectedEthnicity, setSelectedEthnicity] = useState("");
+  const [selectedBodyType, setSelectedBodyType] = useState("");
+  const [selectedHairColor, setSelectedHairColor] = useState("");
 
   const handleSearch = () => {
     onSearch({
       searchTerm,
       priceRange,
-      ageRange,
-      distance,
+      services: selectedServices,
+      state: selectedState,
+      city: selectedCity,
+      neighborhood: selectedNeighborhood,
+      ethnicity: selectedEthnicity,
+      bodyType: selectedBodyType,
+      hairColor: selectedHairColor,
     });
+  };
+
+  const handleServiceChange = (service: string) => {
+    setSelectedServices(prev => 
+      prev.includes(service) 
+        ? prev.filter(s => s !== service)
+        : [...prev, service]
+    );
   };
 
   return (
@@ -85,115 +91,55 @@ export const SearchFilters = ({ viewMode, setViewMode, onSearch }: SearchFilters
 
       {showFilters && (
         <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-              <label className="text-sm font-medium mb-2 block">
-                Faixa de Preço
-              </label>
-              <div className="flex items-center gap-4">
-                <Input
-                  type="number"
-                  value={priceRange[0]}
-                  onChange={(e) => setPriceRange([+e.target.value, priceRange[1]])}
-                  className="w-24"
-                />
-                <Slider
-                  value={priceRange}
-                  onValueChange={setPriceRange}
-                  max={1000}
-                  step={50}
-                  className="flex-1"
-                />
-                <Input
-                  type="number"
-                  value={priceRange[1]}
-                  onChange={(e) => setPriceRange([priceRange[0], +e.target.value])}
-                  className="w-24"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="text-sm font-medium mb-2 block">
-                Faixa de Idade
-              </label>
-              <div className="flex items-center gap-4">
-                <Input
-                  type="number"
-                  value={ageRange[0]}
-                  onChange={(e) => setAgeRange([+e.target.value, ageRange[1]])}
-                  className="w-24"
-                />
-                <Slider
-                  value={ageRange}
-                  onValueChange={setAgeRange}
-                  min={18}
-                  max={60}
-                  step={1}
-                  className="flex-1"
-                />
-                <Input
-                  type="number"
-                  value={ageRange[1]}
-                  onChange={(e) => setAgeRange([ageRange[0], +e.target.value])}
-                  className="w-24"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="text-sm font-medium mb-2 block">
-                Distância Máxima (km)
-              </label>
-              <div className="flex items-center gap-4">
-                <Slider
-                  value={distance}
-                  onValueChange={setDistance}
-                  max={100}
-                  step={5}
-                  className="flex-1"
-                />
-                <Input
-                  type="number"
-                  value={distance[0]}
-                  onChange={(e) => setDistance([+e.target.value])}
-                  className="w-24"
-                />
-              </div>
+          <div>
+            <label className="text-sm font-medium mb-2 block">
+              Faixa de Preço
+            </label>
+            <div className="flex items-center gap-4">
+              <Input
+                type="number"
+                value={priceRange[0]}
+                onChange={(e) => setPriceRange([+e.target.value, priceRange[1]])}
+                className="w-24"
+              />
+              <Slider
+                value={priceRange}
+                onValueChange={setPriceRange}
+                max={1000}
+                step={50}
+                className="flex-1"
+              />
+              <Input
+                type="number"
+                value={priceRange[1]}
+                onChange={(e) => setPriceRange([priceRange[0], +e.target.value])}
+                className="w-24"
+              />
             </div>
           </div>
 
-          <div className="space-y-4">
-            <div className="flex items-center gap-6">
-              <label className="flex items-center gap-2">
-                <Checkbox />
-                <span>Premium</span>
-              </label>
-              <label className="flex items-center gap-2">
-                <Checkbox />
-                <span>Verificada</span>
-              </label>
-              <label className="flex items-center gap-2">
-                <Checkbox />
-                <span>Online</span>
-              </label>
-            </div>
+          <LocationFilters
+            selectedState={selectedState}
+            selectedCity={selectedCity}
+            selectedNeighborhood={selectedNeighborhood}
+            onStateChange={setSelectedState}
+            onCityChange={setSelectedCity}
+            onNeighborhoodChange={setSelectedNeighborhood}
+          />
 
-            <div>
-              <p className="font-medium mb-2">Filtros Rápidos</p>
-              <div className="flex flex-wrap gap-2">
-                {quickFilters.map((filter) => (
-                  <Badge
-                    key={filter}
-                    variant="outline"
-                    className="cursor-pointer hover:bg-pink-50"
-                  >
-                    {filter}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          </div>
+          <ServiceFilters
+            selectedServices={selectedServices}
+            onServiceChange={handleServiceChange}
+          />
+
+          <CharacteristicsFilters
+            selectedEthnicity={selectedEthnicity}
+            selectedBodyType={selectedBodyType}
+            selectedHairColor={selectedHairColor}
+            onEthnicityChange={setSelectedEthnicity}
+            onBodyTypeChange={setSelectedBodyType}
+            onHairColorChange={setSelectedHairColor}
+          />
         </div>
       )}
     </div>

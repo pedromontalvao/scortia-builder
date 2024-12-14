@@ -73,34 +73,9 @@ INSERT INTO companions (
   250,
   4.5,
   89
-),
-(
-  'comp-003',
-  'Valentina Rodriguez',
-  'Venezuelana fogosa, carinhosa e muito sensual. Momentos inesquecíveis garantidos.',
-  'São Paulo',
-  'São Paulo',
-  'Moema',
-  '11999999999',
-  ARRAY['Oral', 'Anal', 'Beijo francês', 'Massagem erótica', 'Fetiches'],
-  ARRAY['Homens'],
-  ARRAY['Hotel / Motel', 'Em casa'],
-  'Latina',
-  'Venezuelana',
-  'Com silicone',
-  'Cabelo Castanho',
-  'Magra',
-  '{"Segunda": {"start": "11:00", "end": "23:00"}, "Terça": {"start": "11:00", "end": "23:00"}, "Quarta": {"start": "11:00", "end": "23:00"}, "Quinta": {"start": "11:00", "end": "23:00"}, "Sexta": {"start": "11:00", "end": "23:00"}, "Sábado": {"start": "13:00", "end": "21:00"}, "Domingo": {"start": "13:00", "end": "21:00"}}',
-  true,
-  true,
-  NOW(),
-  500,
-  4.9,
-  178
 );
 
 -- Add companion photos
 INSERT INTO companion_photos (companion_id, url, is_primary) VALUES
 ('comp-001', '/lovable-uploads/97d88f7a-34f8-450e-a9ac-f3c450dc1cfd.png', true),
-('comp-002', '/lovable-uploads/97d88f7a-34f8-450e-a9ac-f3c450dc1cfd.png', true),
-('comp-003', '/lovable-uploads/97d88f7a-34f8-450e-a9ac-f3c450dc1cfd.png', true);
+('comp-002', '/lovable-uploads/97d88f7a-34f8-450e-a9ac-f3c450dc1cfd.png', true);
