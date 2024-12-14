@@ -24,8 +24,7 @@ INSERT INTO companions (
   created_at,
   price,
   rating,
-  reviews,
-  imageUrl
+  reviews
 ) VALUES 
 (
   'comp-001',
@@ -35,7 +34,7 @@ INSERT INTO companions (
   'São Paulo',
   'Jardins',
   '11999999999',
-  ARRAY['Massagem erótica', 'Massagem tântrica', 'Beijo francês'],
+  ARRAY['Massagem erótica', 'Massagem tântrica', 'Beijo francês', 'Oral', 'Anal'],
   ARRAY['Homens', 'Casais'],
   ARRAY['Hotel / Motel', 'Em casa'],
   'Latina',
@@ -49,8 +48,7 @@ INSERT INTO companions (
   NOW(),
   300,
   4.8,
-  124,
-  'https://example.com/photos/isabella.jpg'
+  124
 ),
 (
   'comp-002',
@@ -60,7 +58,7 @@ INSERT INTO companions (
   'Rio de Janeiro',
   'Copacabana',
   '21999999999',
-  ARRAY['Massagem erótica', 'Beijo francês', 'Tratamento de namorados'],
+  ARRAY['Massagem erótica', 'Beijo francês', 'Tratamento de namorados', 'Oral'],
   ARRAY['Homens'],
   ARRAY['Hotel / Motel'],
   'Brasileiras',
@@ -74,68 +72,17 @@ INSERT INTO companions (
   NOW(),
   250,
   4.5,
-  89,
-  'https://example.com/photos/julia.jpg'
+  89
 ),
 (
   'comp-003',
-  'Sofia Mendes',
-  'Carinhosa e sensual, proporciono momentos inesquecíveis com muito glamour e discrição.',
-  'Minas Gerais',
-  'Belo Horizonte',
-  'Savassi',
-  '31999999999',
-  ARRAY['Oral', 'Massagem erótica', 'Beijo francês', 'Fetiches'],
-  ARRAY['Homens', 'Casais', 'Mulheres'],
-  ARRAY['Hotel / Motel', 'Em casa', 'Eventos e festas'],
-  'Latina',
-  'Brasileira',
-  'Seios Natural',
-  'Cabelo Preto',
-  'Curvas',
-  '{"Segunda": {"start": "12:00", "end": "22:00"}, "Terça": {"start": "12:00", "end": "22:00"}, "Quarta": {"start": "12:00", "end": "22:00"}, "Quinta": {"start": "12:00", "end": "22:00"}, "Sexta": {"start": "12:00", "end": "22:00"}, "Sábado": {"start": "14:00", "end": "22:00"}}',
-  true,
-  true,
-  NOW(),
-  400,
-  4.9,
-  156,
-  'https://example.com/photos/sofia.jpg'
-),
-(
-  'comp-004',
-  'Amanda Costa',
-  'Acompanhante VIP para momentos especiais. Atendimento exclusivo e personalizado.',
-  'São Paulo',
-  'Campinas',
-  'Cambuí',
-  '19999999999',
-  ARRAY['Massagem tântrica', 'Beijo francês', 'Tratamento de namorados', 'Massagem erótica'],
-  ARRAY['Homens', 'Casais'],
-  ARRAY['Hotel / Motel', 'Em casa'],
-  'Brasileiras',
-  'Brasileira',
-  'Com silicone',
-  'Cabelo Ruivo',
-  'BBW',
-  '{"Segunda": {"start": "09:00", "end": "21:00"}, "Terça": {"start": "09:00", "end": "21:00"}, "Quarta": {"start": "09:00", "end": "21:00"}, "Quinta": {"start": "09:00", "end": "21:00"}, "Sexta": {"start": "09:00", "end": "21:00"}, "Sábado": {"start": "10:00", "end": "18:00"}}',
-  true,
-  false,
-  NOW(),
-  350,
-  4.7,
-  92,
-  'https://example.com/photos/amanda.jpg'
-),
-(
-  'comp-005',
   'Valentina Rodriguez',
   'Venezuelana fogosa, carinhosa e muito sensual. Momentos inesquecíveis garantidos.',
   'São Paulo',
   'São Paulo',
   'Moema',
   '11999999999',
-  ARRAY['Oral', 'Anal', 'Beijo francês', 'Massagem erótica'],
+  ARRAY['Oral', 'Anal', 'Beijo francês', 'Massagem erótica', 'Fetiches'],
   ARRAY['Homens'],
   ARRAY['Hotel / Motel', 'Em casa'],
   'Latina',
@@ -149,6 +96,11 @@ INSERT INTO companions (
   NOW(),
   500,
   4.9,
-  178,
-  'https://example.com/photos/valentina.jpg'
+  178
 );
+
+-- Add companion photos
+INSERT INTO companion_photos (companion_id, url, is_primary) VALUES
+('comp-001', '/lovable-uploads/97d88f7a-34f8-450e-a9ac-f3c450dc1cfd.png', true),
+('comp-002', '/lovable-uploads/97d88f7a-34f8-450e-a9ac-f3c450dc1cfd.png', true),
+('comp-003', '/lovable-uploads/97d88f7a-34f8-450e-a9ac-f3c450dc1cfd.png', true);
