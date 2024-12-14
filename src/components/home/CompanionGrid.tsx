@@ -1,13 +1,34 @@
 import { CompanionCard } from "@/components/CompanionCard";
 
 interface CompanionGridProps {
-  companions: any[];
+  companions: Array<{
+    id: string;
+    name: string;
+    rating: number;
+    reviews: number;
+    price: number;
+    services: string[];
+    companion_photos: Array<{ url: string }>;
+    is_premium?: boolean;
+    is_verified?: boolean;
+    neighborhood?: string;
+    city?: string;
+    state?: string;
+  }>;
   viewMode: "grid" | "list";
 }
 
 export const CompanionGrid = ({ companions, viewMode }: CompanionGridProps) => {
   console.log("Rendering companions:", companions);
   
+  if (!companions || companions.length === 0) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-gray-500">Nenhuma acompanhante encontrada.</p>
+      </div>
+    );
+  }
+
   return (
     <div className={`grid ${
       viewMode === "grid" ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"
