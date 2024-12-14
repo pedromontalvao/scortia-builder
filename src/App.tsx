@@ -33,6 +33,10 @@ const App = () => {
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
+              <Route path="/cuiaba" element={<Index city="Cuiabá" />} />
+              <Route path="/varzea-grande" element={<Index city="Várzea Grande" />} />
+              <Route path="/rondonopolis" element={<Index city="Rondonópolis" />} />
+              <Route path="/sinop" element={<Index city="Sinop" />} />
               <Route path="/acompanhante/:id" element={<CompanionProfile />} />
               <Route path="/painel" element={<CompanionDashboard />}>
                 <Route path="midia" element={<MediaManager />} />
