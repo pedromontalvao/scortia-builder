@@ -1,11 +1,11 @@
 import { useParams } from "react-router-dom";
 import { ProfileHeader } from "@/components/companion/ProfileHeader";
 import { PersonalInfo } from "@/components/companion/PersonalInfo";
-import { Measurements } from "@/components/companion/Measurements";
 import { LocationInfo } from "@/components/companion/LocationInfo";
 import { PhotoGallery } from "@/components/companion/PhotoGallery";
 import { ServicesAndPrices } from "@/components/companion/ServicesAndPrices";
 import { ContactInfo } from "@/components/companion/ContactInfo";
+import { NotFoundState } from "@/components/companion/NotFoundState";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
@@ -48,18 +48,15 @@ export const CompanionProfile = () => {
   };
 
   if (isLoading) {
-    return <div>Carregando...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-pink-500" />
+      </div>
+    );
   }
 
   if (!companion) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Acompanhante não encontrada</h1>
-          <p className="text-gray-600">O perfil que você está procurando não existe ou foi removido.</p>
-        </div>
-      </div>
-    );
+    return <NotFoundState />;
   }
 
   const primaryPhoto = companion.companion_photos?.find(photo => photo.is_primary)?.url || companion.companion_photos?.[0]?.url;
@@ -86,7 +83,6 @@ export const CompanionProfile = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="md:col-span-2 space-y-8">
             <PersonalInfo {...companion.personal_info} />
-            <Measurements {...companion.measurements} />
             <PhotoGallery photos={companion.companion_photos?.map(photo => photo.url) || []} />
             {companion.companion_services && companion.companion_services.length > 0 && (
               <ServicesAndPrices services={companion.companion_services} />
@@ -99,7 +95,7 @@ export const CompanionProfile = () => {
               email={companion.email}
               schedule={{
                 weekdays: companion.weekday_hours || "Sob consulta",
-                saturday: companion.weekend_hours || "Sob consulta"
+                weekend: companion.weekend_hours || "Sob consulta"
               }}
               onContact={handleContact}
             />

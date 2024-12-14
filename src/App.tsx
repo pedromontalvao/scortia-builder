@@ -13,6 +13,7 @@ import { MediaManager } from "@/components/companion/dashboard/MediaManager";
 import { VerificationRequest } from "@/components/companion/dashboard/VerificationRequest";
 import { Analytics } from "@/components/companion/dashboard/Analytics";
 import { Subscription } from "@/components/companion/dashboard/Subscription";
+import VarzeaGrande from "./pages/cities/VarzeaGrande";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -33,10 +34,7 @@ const App = () => {
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
-              <Route path="/cuiaba" element={<Index city="Cuiabá" />} />
-              <Route path="/varzea-grande" element={<Index city="Várzea Grande" />} />
-              <Route path="/rondonopolis" element={<Index city="Rondonópolis" />} />
-              <Route path="/sinop" element={<Index city="Sinop" />} />
+              <Route path="/varzea-grande" element={<VarzeaGrande />} />
               <Route path="/acompanhante/:id" element={<CompanionProfile />} />
               <Route path="/painel" element={<CompanionDashboard />}>
                 <Route path="midia" element={<MediaManager />} />
