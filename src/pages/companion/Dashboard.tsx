@@ -1,49 +1,80 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { DashboardNav } from "@/components/companion/dashboard/DashboardNav";
 import { ProfileSettings } from "@/components/companion/dashboard/ProfileSettings";
 import { MediaManager } from "@/components/companion/dashboard/MediaManager";
 import { VerificationRequest } from "@/components/companion/dashboard/VerificationRequest";
 import { Subscription } from "@/components/companion/dashboard/Subscription";
 import { Analytics } from "@/components/companion/dashboard/Analytics";
+import { Button } from "@/components/ui/button";
+import { Menu } from "lucide-react";
 
 export const CompanionDashboard = () => {
-  const [activeTab, setActiveTab] = useState("profile");
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="container mx-auto px-4">
-        <h1 className="text-3xl font-bold mb-8">Painel da Acompanhante</h1>
-        
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="mb-8">
-            <TabsTrigger value="profile">Perfil</TabsTrigger>
-            <TabsTrigger value="media">Mídia</TabsTrigger>
-            <TabsTrigger value="verification">Verificação</TabsTrigger>
-            <TabsTrigger value="subscription">Assinatura</TabsTrigger>
-            <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          </TabsList>
+    <div className="min-h-screen bg-gray-50">
+      <div className="flex">
+        {/* Sidebar */}
+        <aside className={`
+          fixed top-0 left-0 z-40 h-screen w-64 transform transition-transform duration-300 ease-in-out
+          bg-white border-r border-gray-200 p-4
+          md:relative md:translate-x-0
+          ${showMobileMenu ? 'translate-x-0' : '-translate-x-full'}
+        `}>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold">Painel</h2>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden"
+              onClick={() => setShowMobileMenu(false)}
+            >
+              <Menu className="h-6 w-6" />
+            </Button>
+          </div>
+          <DashboardNav />
+        </aside>
 
-          <TabsContent value="profile">
-            <ProfileSettings />
-          </TabsContent>
+        {/* Mobile menu button */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="fixed top-4 left-4 z-50 md:hidden"
+          onClick={() => setShowMobileMenu(true)}
+        >
+          <Menu className="h-6 w-6" />
+        </Button>
 
-          <TabsContent value="media">
-            <MediaManager />
-          </TabsContent>
+        {/* Main content */}
+        <main className="flex-1 p-6 md:p-8 ml-0 md:ml-64">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <Card className="p-6">
+                <h3 className="font-medium text-gray-500 mb-1">Visualizações</h3>
+                <p className="text-3xl font-bold">1,234</p>
+                <span className="text-sm text-green-500">+12% essa semana</span>
+              </Card>
+              
+              <Card className="p-6">
+                <h3 className="font-medium text-gray-500 mb-1">Mensagens</h3>
+                <p className="text-3xl font-bold">56</p>
+                <span className="text-sm text-green-500">+8% essa semana</span>
+              </Card>
+              
+              <Card className="p-6">
+                <h3 className="font-medium text-gray-500 mb-1">Agendamentos</h3>
+                <p className="text-3xl font-bold">23</p>
+                <span className="text-sm text-green-500">+15% essa semana</span>
+              </Card>
+            </div>
 
-          <TabsContent value="verification">
-            <VerificationRequest />
-          </TabsContent>
-
-          <TabsContent value="subscription">
-            <Subscription />
-          </TabsContent>
-
-          <TabsContent value="analytics">
-            <Analytics />
-          </TabsContent>
-        </Tabs>
+            <div className="space-y-8">
+              <ProfileSettings />
+              <Analytics />
+            </div>
+          </div>
+        </main>
       </div>
     </div>
   );
