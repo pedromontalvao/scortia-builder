@@ -18,6 +18,8 @@ export const LocationInfo = ({
   city,
   state 
 }: LocationInfoProps) => {
+  console.log('Rendering LocationInfo with:', { location, serviceAreas, neighborhood, city, state });
+  
   return (
     <Card>
       <CardContent className="p-6">
