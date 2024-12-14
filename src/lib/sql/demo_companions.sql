@@ -18,7 +18,8 @@ INSERT INTO companions (
   is_premium,
   price,
   rating,
-  reviews
+  reviews,
+  service_areas
 ) VALUES 
 (
   'comp-001',
@@ -36,7 +37,8 @@ INSERT INTO companions (
   true,
   300,
   4.8,
-  124
+  124,
+  ARRAY['Jardins', 'Pinheiros', 'Vila Madalena', 'Itaim Bibi']
 ),
 (
   'comp-002',
@@ -54,7 +56,8 @@ INSERT INTO companions (
   false,
   250,
   4.5,
-  89
+  89,
+  ARRAY['Copacabana', 'Ipanema', 'Leblon', 'Barra da Tijuca']
 );
 
 -- Add companion photos
