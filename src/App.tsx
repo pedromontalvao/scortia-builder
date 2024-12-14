@@ -15,6 +15,8 @@ import { Analytics } from "@/components/companion/dashboard/Analytics";
 import { Subscription } from "@/components/companion/dashboard/Subscription";
 import VarzeaGrande from "./pages/cities/VarzeaGrande";
 import { CompanionRegistrationForm } from "@/components/companion/registration/CompanionRegistrationForm";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -33,20 +35,26 @@ const App = () => {
           <Toaster />
           <Sonner />
           <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/varzea-grande" element={<VarzeaGrande />} />
-              <Route path="/acompanhante/:id" element={<CompanionProfile />} />
-              <Route path="/cadastro-acompanhante" element={<CompanionRegistrationForm />} />
-              <Route path="/painel" element={<CompanionDashboard />}>
-                <Route path="midia" element={<MediaManager />} />
-                <Route path="verificacao" element={<VerificationRequest />} />
-                <Route path="assinatura" element={<Subscription />} />
-                <Route path="analytics" element={<Analytics />} />
-                <Route path="configuracoes" element={<ProfileSettings />} />
-              </Route>
-              <Route path="/admin" element={<AdminDashboard />} />
-            </Routes>
+            <div className="flex flex-col min-h-screen">
+              <Header />
+              <main className="flex-grow">
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/varzea-grande" element={<VarzeaGrande />} />
+                  <Route path="/acompanhante/:id" element={<CompanionProfile />} />
+                  <Route path="/cadastro-acompanhante" element={<CompanionRegistrationForm />} />
+                  <Route path="/painel" element={<CompanionDashboard />}>
+                    <Route path="midia" element={<MediaManager />} />
+                    <Route path="verificacao" element={<VerificationRequest />} />
+                    <Route path="assinatura" element={<Subscription />} />
+                    <Route path="analytics" element={<Analytics />} />
+                    <Route path="configuracoes" element={<ProfileSettings />} />
+                  </Route>
+                  <Route path="/admin" element={<AdminDashboard />} />
+                </Routes>
+              </main>
+              <Footer />
+            </div>
           </BrowserRouter>
         </TooltipProvider>
       </QueryClientProvider>

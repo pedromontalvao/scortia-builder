@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserManagement } from "@/components/admin/UserManagement";
 import { CompanionManagement } from "@/components/admin/CompanionManagement";
+import { ContentModeration } from "@/components/admin/ContentModeration";
+import { SubscriptionManagement } from "@/components/admin/SubscriptionManagement";
 import { Analytics } from "@/components/admin/Analytics";
 import { Support } from "@/components/admin/Support";
 
@@ -17,6 +19,8 @@ export const AdminDashboard = () => {
           <TabsList className="mb-8">
             <TabsTrigger value="companions">Acompanhantes</TabsTrigger>
             <TabsTrigger value="users">Usuários</TabsTrigger>
+            <TabsTrigger value="content">Moderação</TabsTrigger>
+            <TabsTrigger value="subscriptions">Assinaturas</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
             <TabsTrigger value="support">Suporte</TabsTrigger>
           </TabsList>
@@ -27,6 +31,14 @@ export const AdminDashboard = () => {
 
           <TabsContent value="users">
             <UserManagement />
+          </TabsContent>
+
+          <TabsContent value="content">
+            <ContentModeration />
+          </TabsContent>
+
+          <TabsContent value="subscriptions">
+            <SubscriptionManagement />
           </TabsContent>
 
           <TabsContent value="analytics">

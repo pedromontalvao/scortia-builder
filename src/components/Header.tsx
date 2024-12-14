@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Heart, LogOut, Menu, X } from "lucide-react";
+import { Heart, LogOut, Menu, User } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { AuthDialog } from "./auth/AuthDialog";
@@ -10,11 +10,16 @@ import {
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export const Header = () => {
   const [showAuthDialog, setShowAuthDialog] = useState(false);
   const [defaultAuthTab, setDefaultAuthTab] = useState<"login" | "register">("login");
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
   
@@ -34,23 +39,28 @@ export const Header = () => {
   const NavItems = () => (
     <>
       {isLoggedIn ? (
-        <>
-          <Button 
-            variant="ghost" 
-            className="text-white hover:text-pink-500"
-            onClick={() => navigate(userType === "companion" ? "/painel" : "/perfil")}
-          >
-            Meu Painel
-          </Button>
-          <Button 
-            variant="ghost" 
-            className="text-white hover:text-pink-500"
-            onClick={handleLogout}
-          >
-            <LogOut className="w-4 h-4 mr-2" />
-            Sair
-          </Button>
-        </>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="text-white hover:text-pink-500">
+              <User className="w-4 h-4 mr-2" />
+              Minha Conta
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem onClick={() => navigate(userType === "companion" ? "/painel" : "/perfil")}>
+              Meu Painel
+            </DropdownMenuItem>
+            {userType === "admin" && (
+              <DropdownMenuItem onClick={() => navigate("/admin")}>
+                Painel Admin
+              </DropdownMenuItem>
+            )}
+            <DropdownMenuItem onClick={handleLogout}>
+              <LogOut className="w-4 h-4 mr-2" />
+              Sair
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       ) : (
         <>
           <Button

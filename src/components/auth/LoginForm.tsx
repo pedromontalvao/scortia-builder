@@ -40,6 +40,8 @@ export const LoginForm = ({ onClose }: { onClose: () => void }) => {
       
       if (userType === "companion") {
         navigate("/painel");
+      } else if (userType === "admin") {
+        navigate("/admin");
       } else {
         navigate("/");
       }
