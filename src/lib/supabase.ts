@@ -20,7 +20,6 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   },
 });
 
-// Add a helper to check Supabase connection
 export const checkSupabaseConnection = async () => {
   try {
     const { data, error } = await supabase.from('companions').select('count', { count: 'exact' });

@@ -55,13 +55,14 @@ const Index: React.FC<IndexProps> = ({ city }) => {
     },
     retry: 2,
     staleTime: 5 * 60 * 1000, // 5 minutes
-    onError: (error) => {
-      console.error('Query error:', error);
-      toast({
-        title: "Erro ao carregar dados",
-        description: "Não foi possível carregar as acompanhantes. Tente novamente mais tarde.",
-        variant: "destructive"
-      });
+    meta: {
+      onError: () => {
+        toast({
+          title: "Erro ao carregar dados",
+          description: "Não foi possível carregar as acompanhantes. Tente novamente mais tarde.",
+          variant: "destructive"
+        });
+      }
     }
   });
 

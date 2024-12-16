@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { supabase } from "@/lib/supabase";
+import { supabase, checkSupabaseConnection } from "@/lib/supabase";
 import { RegistrationBasicInfo } from "./registration/RegistrationBasicInfo";
 import { RegistrationPassword } from "./registration/RegistrationPassword";
 
