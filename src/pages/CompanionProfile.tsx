@@ -6,7 +6,7 @@ import { NotFoundState } from "@/components/companion/NotFoundState";
 
 export const CompanionProfile = () => {
   const { id } = useParams();
-  const { companion, isLoading, error } = useCompanionData(id);
+  const { data: companion, isLoading, error } = useCompanionData(id);
 
   if (isLoading) {
     return (

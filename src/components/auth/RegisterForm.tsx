@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { supabase } from "@/lib/supabase";
 
@@ -33,6 +33,8 @@ export const RegisterForm = ({ onClose }: { onClose: () => void }) => {
     setIsLoading(true);
     
     try {
+      console.log('Starting registration process...');
+
       if (formData.password !== formData.confirmPassword) {
         toast({
           title: "Erro no cadastro",
@@ -42,6 +44,8 @@ export const RegisterForm = ({ onClose }: { onClose: () => void }) => {
         return;
       }
 
+      console.log('Attempting to register user with Supabase Auth...');
+      
       // Register user in Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: formData.email,
@@ -55,15 +59,27 @@ export const RegisterForm = ({ onClose }: { onClose: () => void }) => {
         }
       });
 
-      if (authError) throw authError;
+      if (authError) {
+        console.error('Supabase Auth error:', authError);
+        throw authError;
+      }
+
+      if (!authData.user) {
+        console.error('No user data returned from Supabase Auth');
+        throw new Error('Registration failed - no user data');
+      }
+
+      console.log('User registered successfully with Supabase Auth');
 
       // Create profile in the appropriate table based on user type
       if (formData.userType === "companion") {
+        console.log('Creating companion profile...');
+        
         const { error: profileError } = await supabase
           .from('companions')
           .insert([
             {
-              user_id: authData.user?.id,
+              user_id: authData.user.id,
               name: formData.name,
               email: formData.email,
               phone: formData.phone,
@@ -72,7 +88,12 @@ export const RegisterForm = ({ onClose }: { onClose: () => void }) => {
             }
           ]);
 
-        if (profileError) throw profileError;
+        if (profileError) {
+          console.error('Error creating companion profile:', profileError);
+          throw profileError;
+        }
+
+        console.log('Companion profile created successfully');
       }
 
       toast({

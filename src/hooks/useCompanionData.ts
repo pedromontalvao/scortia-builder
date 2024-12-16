@@ -61,28 +61,45 @@ export const useCompanionData = (id?: string) => {
     queryFn: async () => {
       console.log('Fetching companion data for ID:', id);
 
+      if (!id) {
+        console.error('No companion ID provided');
+        throw new Error('No companion ID provided');
+      }
+
       if (id === 'comp-001') {
         console.log('Returning demo data for comp-001');
         return demoCompanion;
       }
 
-      const { data, error } = await supabase
-        .from('companions')
-        .select(`
-          *,
-          companion_photos(url, is_primary),
-          companion_services(title, duration, price, description)
-        `)
-        .eq('id', id)
-        .single();
+      try {
+        const { data, error } = await supabase
+          .from('companions')
+          .select(`
+            *,
+            companion_photos(url, is_primary),
+            companion_services(title, duration, price, description)
+          `)
+          .eq('id', id)
+          .single();
 
-      if (error) {
-        console.error('Error fetching companion:', error);
+        if (error) {
+          console.error('Supabase error fetching companion:', error);
+          throw error;
+        }
+
+        if (!data) {
+          console.error('No companion found with ID:', id);
+          throw new Error('Companion not found');
+        }
+        
+        console.log('Successfully fetched companion data:', data);
+        return data;
+      } catch (error) {
+        console.error('Error in useCompanionData:', error);
         throw error;
       }
-      
-      console.log('Fetched companion data:', data);
-      return data;
-    }
+    },
+    retry: 1,
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 };
