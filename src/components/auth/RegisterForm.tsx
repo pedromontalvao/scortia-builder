@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 import { supabase } from "@/lib/supabase";
+import { RegistrationBasicInfo } from "./registration/RegistrationBasicInfo";
+import { RegistrationPassword } from "./registration/RegistrationPassword";
 
 export const RegisterForm = ({ onClose }: { onClose: () => void }) => {
   const navigate = useNavigate();
@@ -44,9 +45,14 @@ export const RegisterForm = ({ onClose }: { onClose: () => void }) => {
         return;
       }
 
+      // Check Supabase connection first
+      const isConnected = await checkSupabaseConnection();
+      if (!isConnected) {
+        throw new Error('Unable to connect to the database');
+      }
+
       console.log('Attempting to register user with Supabase Auth...');
       
-      // Register user in Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
@@ -71,22 +77,19 @@ export const RegisterForm = ({ onClose }: { onClose: () => void }) => {
 
       console.log('User registered successfully with Supabase Auth');
 
-      // Create profile in the appropriate table based on user type
       if (formData.userType === "companion") {
         console.log('Creating companion profile...');
         
         const { error: profileError } = await supabase
           .from('companions')
-          .insert([
-            {
-              user_id: authData.user.id,
-              name: formData.name,
-              email: formData.email,
-              phone: formData.phone,
-              is_verified: false,
-              is_premium: false
-            }
-          ]);
+          .insert([{
+            user_id: authData.user.id,
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone,
+            is_verified: false,
+            is_premium: false
+          }]);
 
         if (profileError) {
           console.error('Error creating companion profile:', profileError);
@@ -101,13 +104,11 @@ export const RegisterForm = ({ onClose }: { onClose: () => void }) => {
         description: "Verifique seu email para confirmar o cadastro."
       });
 
-      // Store user type in localStorage
       localStorage.setItem("userType", formData.userType);
       localStorage.setItem("isLoggedIn", "true");
       
       onClose();
       
-      // Redirect based on user type
       if (formData.userType === "companion") {
         navigate("/painel");
       } else {
@@ -127,66 +128,16 @@ export const RegisterForm = ({ onClose }: { onClose: () => void }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <Label htmlFor="name">Nome</Label>
-        <Input
-          id="name"
-          name="name"
-          type="text"
-          value={formData.name}
-          onChange={handleChange}
-          required
-        />
-      </div>
-
-      <div>
-        <Label htmlFor="register-email">Email</Label>
-        <Input
-          id="register-email"
-          name="email"
-          type="email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
-      </div>
-
-      <div>
-        <Label htmlFor="phone">Telefone</Label>
-        <Input
-          id="phone"
-          name="phone"
-          type="tel"
-          value={formData.phone}
-          onChange={handleChange}
-          required
-        />
-      </div>
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <RegistrationBasicInfo 
+        formData={formData} 
+        onChange={handleChange} 
+      />
       
-      <div>
-        <Label htmlFor="register-password">Senha</Label>
-        <Input
-          id="register-password"
-          name="password"
-          type="password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
-      </div>
-      
-      <div>
-        <Label htmlFor="confirm-password">Confirmar Senha</Label>
-        <Input
-          id="confirm-password"
-          name="confirmPassword"
-          type="password"
-          value={formData.confirmPassword}
-          onChange={handleChange}
-          required
-        />
-      </div>
+      <RegistrationPassword 
+        formData={formData} 
+        onChange={handleChange} 
+      />
 
       <div>
         <Label>Tipo de Conta</Label>

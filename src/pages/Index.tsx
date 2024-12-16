@@ -3,7 +3,8 @@ import { CompanionGrid } from "@/components/home/CompanionGrid";
 import { SearchFilters } from "@/components/home/SearchFilters";
 import { HeroSection } from "@/components/HeroSection";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase";
+import { supabase, checkSupabaseConnection } from "@/lib/supabase";
+import { useToast } from "@/hooks/use-toast";
 
 interface IndexProps {
   city?: string;
@@ -11,11 +12,18 @@ interface IndexProps {
 
 const Index: React.FC<IndexProps> = ({ city }) => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const { toast } = useToast();
   
   const { data: companions, isLoading, error } = useQuery({
     queryKey: ['companions', city],
     queryFn: async () => {
       console.log('Fetching companions from Supabase...');
+      
+      const isConnected = await checkSupabaseConnection();
+      if (!isConnected) {
+        throw new Error('Unable to connect to the database');
+      }
+
       let query = supabase.from('companions').select(`
         id,
         name,
@@ -44,6 +52,16 @@ const Index: React.FC<IndexProps> = ({ city }) => {
       
       console.log('Fetched companions:', data);
       return data || [];
+    },
+    retry: 2,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    onError: (error) => {
+      console.error('Query error:', error);
+      toast({
+        title: "Erro ao carregar dados",
+        description: "Não foi possível carregar as acompanhantes. Tente novamente mais tarde.",
+        variant: "destructive"
+      });
     }
   });
 
