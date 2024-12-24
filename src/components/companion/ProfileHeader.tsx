@@ -1,9 +1,20 @@
-import { MessageSquare, Crown, Heart, Share2, Star, Shield } from "lucide-react";
+import { MessageSquare, Crown, Heart, Share2, Star, Shield, Eye, Flag, AlertTriangle, HelpCircle } from "lucide-react";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface ProfileHeaderProps {
   name: string;
@@ -110,6 +121,35 @@ export const ProfileHeader = ({
               >
                 <Share2 className="h-4 w-4" />
               </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    className="text-white hover:bg-white/20 backdrop-blur-sm"
+                  >
+                    <Flag className="h-4 w-4" />
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Denunciar Perfil</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Tem certeza que deseja denunciar este perfil? Esta ação não pode ser desfeita.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => {
+                      toast({
+                        title: "Denúncia enviada",
+                        description: "Sua denúncia foi enviada e será analisada pela nossa equipe.",
+                      });
+                    }}>
+                      Denunciar
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
           </div>
           
@@ -147,22 +187,60 @@ export const ProfileHeader = ({
 
                 <div className="flex flex-wrap gap-4 text-sm text-gray-300">
                   <div className="flex items-center gap-1">
+                    <Eye className="w-4 h-4" />
+                    {views} visualizações hoje
+                  </div>
+                  <div className="flex items-center gap-1">
                     <MessageSquare className="w-4 h-4" />
                     {messages} mensagens
                   </div>
-                  <div>{views} visualizações</div>
-                  <div>{likes} curtidas</div>
+                  <div className="flex items-center gap-1">
+                    <Heart className="w-4 h-4" />
+                    {likes} curtidas
+                  </div>
                 </div>
               </div>
               
-              <Button 
-                onClick={handleWhatsAppClick}
-                size="lg"
-                className="bg-green-500 hover:bg-green-600 text-white w-full md:w-auto hover:scale-105 transition-all duration-300 shadow-lg"
-              >
-                <MessageSquare className="w-5 h-5 mr-2" />
-                Chamar no WhatsApp
-              </Button>
+              <div className="flex flex-col gap-4 w-full md:w-auto">
+                <Button 
+                  onClick={handleWhatsAppClick}
+                  size="lg"
+                  className="bg-green-500 hover:bg-green-600 text-white w-full md:w-auto hover:scale-105 transition-all duration-300 shadow-lg"
+                >
+                  <MessageSquare className="w-5 h-5 mr-2" />
+                  Chamar no WhatsApp
+                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      className="text-white hover:bg-white/20 backdrop-blur-sm w-full md:w-auto"
+                    >
+                      <HelpCircle className="w-4 h-4 mr-2" />
+                      Isenção de Responsabilidade
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Isenção de Responsabilidade</AlertDialogTitle>
+                      <AlertDialogDescription className="space-y-2">
+                        <p>Este site atua apenas como um diretório de anúncios e não se responsabiliza pelo conteúdo, veracidade ou serviços oferecidos nos anúncios.</p>
+                        <p>Todas as informações são de responsabilidade exclusiva dos anunciantes.</p>
+                        <p>Recomendamos que você:</p>
+                        <ul className="list-disc pl-4">
+                          <li>Verifique a identidade da pessoa</li>
+                          <li>Não envie dinheiro antecipadamente</li>
+                          <li>Encontre-se apenas em locais seguros</li>
+                          <li>Informe a alguém de confiança sobre seu encontro</li>
+                        </ul>
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogAction>Entendi</AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
             </div>
           </div>
         </div>
