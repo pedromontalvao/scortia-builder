@@ -61,7 +61,7 @@ export const Community = () => {
 
   if (!isLoggedIn) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-purple-50 to-pink-50">
+      <div className="min-h-screen bg-gradient-to-b from-purple-50 via-pink-50 to-purple-50">
         <div className="container mx-auto px-4 py-12">
           <GuestView />
         </div>
@@ -70,33 +70,38 @@ export const Community = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-pink-50">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-b from-purple-50 via-pink-50 to-purple-50">
+      <div className="container mx-auto px-4 py-8 animate-fade-in">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 text-transparent bg-clip-text">
             Comunidade VivAcompanhantes
           </h1>
-          <Button onClick={handleCreatePost} className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
-            <Plus className="w-4 h-4 mr-2" />
+          <Button 
+            onClick={handleCreatePost} 
+            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 group"
+          >
+            <Plus className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
             Nova Publicação
           </Button>
         </div>
 
-        <CommunityStats stats={stats} isLoading={isLoadingStats} />
+        <div className="mb-8">
+          <CommunityStats stats={stats} isLoading={isLoadingStats} />
+        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mt-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           <div className="lg:col-span-3 space-y-8">
-            <Card className="bg-white/50">
+            <Card className="bg-white/50 backdrop-blur-sm">
               <CardContent className="p-6">
                 <CategoryList />
               </CardContent>
             </Card>
 
-            <Tabs defaultValue={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="feed">Feed</TabsTrigger>
-                <TabsTrigger value="discussions">Discussões</TabsTrigger>
-                <TabsTrigger value="reviews">Avaliações</TabsTrigger>
+            <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="grid w-full grid-cols-3 bg-white/50 backdrop-blur-sm">
+                <TabsTrigger value="feed" className="data-[state=active]:bg-white">Feed</TabsTrigger>
+                <TabsTrigger value="discussions" className="data-[state=active]:bg-white">Discussões</TabsTrigger>
+                <TabsTrigger value="reviews" className="data-[state=active]:bg-white">Avaliações</TabsTrigger>
               </TabsList>
 
               <TabsContent value="feed" className="mt-6">
@@ -114,8 +119,12 @@ export const Community = () => {
           </div>
 
           <div className="space-y-8">
-            <CommunityRules />
-            <TrendingTopics />
+            <div className="sticky top-4">
+              <CommunityRules />
+              <div className="mt-8">
+                <TrendingTopics />
+              </div>
+            </div>
           </div>
         </div>
       </div>
