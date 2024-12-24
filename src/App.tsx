@@ -4,7 +4,6 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "@/components/auth/AuthProvider";
 import Index from "./pages/Index";
 import { CompanionProfile } from "./pages/CompanionProfile";
 import { CompanionDashboard } from "./pages/companion/Dashboard";
@@ -21,12 +20,6 @@ import { CompanionRegistrationForm } from "@/components/companion/registration/C
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 
-// Import state pages
-import SaoPaulo from "./pages/states/SaoPaulo";
-import RioDeJaneiro from "./pages/states/RioDeJaneiro";
-import MinasGerais from "./pages/states/MinasGerais";
-// ... Add other state imports
-
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -40,42 +33,34 @@ const App = () => {
   return (
     <React.StrictMode>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <div className="flex flex-col min-h-screen">
-                <Header />
-                <main className="flex-grow">
-                  <Routes>
-                    <Route path="/" element={<Index />} />
-                    <Route path="/varzea-grande" element={<VarzeaGrande />} />
-                    <Route path="/cidades" element={<CitiesDirectory />} />
-                    <Route path="/comunidade" element={<Community />} />
-                    <Route path="/acompanhante/:id" element={<CompanionProfile />} />
-                    <Route path="/cadastro-acompanhante" element={<CompanionRegistrationForm />} />
-                    <Route path="/painel" element={<CompanionDashboard />}>
-                      <Route path="midia" element={<MediaManager />} />
-                      <Route path="verificacao" element={<VerificationRequest />} />
-                      <Route path="assinatura" element={<Subscription />} />
-                      <Route path="analytics" element={<Analytics />} />
-                      <Route path="configuracoes" element={<ProfileSettings />} />
-                    </Route>
-                    <Route path="/admin" element={<AdminDashboard />} />
-                    
-                    {/* State Routes */}
-                    <Route path="/sao-paulo" element={<SaoPaulo />} />
-                    <Route path="/rio-de-janeiro" element={<RioDeJaneiro />} />
-                    <Route path="/minas-gerais" element={<MinasGerais />} />
-                    {/* Add other state routes */}
-                  </Routes>
-                </main>
-                <Footer />
-              </div>
-            </BrowserRouter>
-          </TooltipProvider>
-        </AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <div className="flex flex-col min-h-screen">
+              <Header />
+              <main className="flex-grow">
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/varzea-grande" element={<VarzeaGrande />} />
+                  <Route path="/cidades" element={<CitiesDirectory />} />
+                  <Route path="/comunidade" element={<Community />} />
+                  <Route path="/acompanhante/:id" element={<CompanionProfile />} />
+                  <Route path="/cadastro-acompanhante" element={<CompanionRegistrationForm />} />
+                  <Route path="/painel" element={<CompanionDashboard />}>
+                    <Route path="midia" element={<MediaManager />} />
+                    <Route path="verificacao" element={<VerificationRequest />} />
+                    <Route path="assinatura" element={<Subscription />} />
+                    <Route path="analytics" element={<Analytics />} />
+                    <Route path="configuracoes" element={<ProfileSettings />} />
+                  </Route>
+                  <Route path="/admin" element={<AdminDashboard />} />
+                </Routes>
+              </main>
+              <Footer />
+            </div>
+          </BrowserRouter>
+        </TooltipProvider>
       </QueryClientProvider>
     </React.StrictMode>
   );

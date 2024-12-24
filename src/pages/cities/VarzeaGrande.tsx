@@ -62,7 +62,7 @@ const VarzeaGrande = () => {
       <CityHero 
         city="Várzea Grande"
         state="Mato Grosso"
-        flagUrl="https://assets.codante.io/codante-apis/bandeiras-do-brasil/mt-full.svg"
+        flagUrl="/cities/varzea-grande-flag.jpg"
         description="Várzea Grande é um município brasileiro do estado de Mato Grosso. É a segunda cidade mais populosa do estado, fazendo parte da Região Metropolitana do Vale do Rio Cuiabá."
         population="284.971 habitantes"
         founded="15 de maio de 1867"
