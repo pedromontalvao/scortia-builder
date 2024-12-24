@@ -7,47 +7,82 @@ export interface Location {
   neighborhood: string;
 }
 
+interface IBGEState {
+  id: number;
+  sigla: string;
+  nome: string;
+}
+
+interface IBGECity {
+  id: number;
+  nome: string;
+}
+
+interface IBGEDistrict {
+  id: number;
+  nome: string;
+}
+
 export const getStates = async (): Promise<string[]> => {
-  console.log('Fetching states...');
-  const { data, error } = await supabase
-    .from('locations')
-    .select('state')
-    .order('state');
-    
-  if (error) {
+  console.log('Fetching states from IBGE API...');
+  try {
+    const response = await fetch('https://servicodados.ibge.gov.br/api/v1/localidades/estados');
+    const states: IBGEState[] = await response.json();
+    const stateNames = states.map(state => state.nome).sort();
+    console.log('States fetched:', stateNames);
+    return stateNames;
+  } catch (error) {
     console.error('Error fetching states:', error);
-    throw error;
+    return [];
   }
-  
-  const states = [...new Set(data.map(item => item.state))];
-  console.log('States fetched:', states);
-  return states;
 };
 
 export const getCitiesByState = async (state: string): Promise<string[]> => {
   console.log('Fetching cities for state:', state);
-  const { data, error } = await supabase
-    .rpc('get_cities_by_state', { state_name: state });
+  try {
+    // First get the state ID
+    const statesResponse = await fetch('https://servicodados.ibge.gov.br/api/v1/localidades/estados');
+    const states: IBGEState[] = await statesResponse.json();
+    const stateData = states.find(s => s.nome === state);
     
-  if (error) {
+    if (!stateData) {
+      console.error('State not found:', state);
+      return [];
+    }
+
+    // Then get cities for that state
+    const citiesResponse = await fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${stateData.id}/municipios`);
+    const cities: IBGECity[] = await citiesResponse.json();
+    const cityNames = cities.map(city => city.nome).sort();
+    console.log('Cities fetched:', cityNames);
+    return cityNames;
+  } catch (error) {
     console.error('Error fetching cities:', error);
-    throw error;
+    return [];
   }
-  
-  console.log('Cities fetched:', data);
-  return data.map(item => item.city);
 };
 
 export const getNeighborhoodsByCity = async (city: string): Promise<string[]> => {
-  console.log('Fetching neighborhoods for city:', city);
-  const { data, error } = await supabase
-    .rpc('get_neighborhoods_by_city', { city_name: city });
+  console.log('Fetching districts for city:', city);
+  try {
+    // First get the city ID
+    const citiesResponse = await fetch('https://servicodados.ibge.gov.br/api/v1/localidades/municipios');
+    const cities: IBGECity[] = await citiesResponse.json();
+    const cityData = cities.find(c => c.nome === city);
     
-  if (error) {
-    console.error('Error fetching neighborhoods:', error);
-    throw error;
+    if (!cityData) {
+      console.error('City not found:', city);
+      return [];
+    }
+
+    // Then get districts for that city
+    const districtsResponse = await fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/municipios/${cityData.id}/distritos`);
+    const districts: IBGEDistrict[] = await districtsResponse.json();
+    const districtNames = districts.map(district => district.nome).sort();
+    console.log('Districts fetched:', districtNames);
+    return districtNames;
+  } catch (error) {
+    console.error('Error fetching districts:', error);
+    return [];
   }
-  
-  console.log('Neighborhoods fetched:', data);
-  return data.map(item => item.neighborhood);
 };
