@@ -79,13 +79,14 @@ export const ProfileSettings = () => {
         updated_at: new Date().toISOString()
       };
 
+      console.log('Saving updated data:', updatedData);
+
       const { error } = await supabase
         .from('companions')
         .upsert({
           user_id: user.id,
           ...updatedData
-        })
-        .eq('user_id', user.id);
+        });
 
       if (error) throw error;
 
