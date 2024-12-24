@@ -16,10 +16,13 @@ interface Topic {
   replies: number;
   created_at: string;
   is_pinned: boolean;
+  images: string[];
+  engagement_score: number;
 }
 
 export const TopicList = () => {
   const { toast } = useToast();
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
   
   const { data: topics, isLoading } = useQuery({
     queryKey: ['community-topics'],
@@ -36,7 +39,9 @@ export const TopicList = () => {
             votes: 42,
             replies: 15,
             created_at: "2024-03-20T10:30:00Z",
-            is_pinned: true
+            is_pinned: true,
+            images: [],
+            engagement_score: 156
           },
           {
             id: 2,
@@ -47,7 +52,9 @@ export const TopicList = () => {
             votes: 38,
             replies: 23,
             created_at: "2024-03-19T15:45:00Z",
-            is_pinned: false
+            is_pinned: false,
+            images: ["https://example.com/image1.jpg"],
+            engagement_score: 132
           }
         ];
       }
@@ -56,21 +63,52 @@ export const TopicList = () => {
         .from('community_topics')
         .select('*')
         .order('is_pinned', { ascending: false })
-        .order('created_at', { ascending: false });
+        .order('engagement_score', { ascending: false });
 
       if (error) throw error;
       return data;
-    }
+    },
+    staleTime: 5 * 60 * 1000 // 5 minutes
   });
 
   const handleVote = (topicId: number, type: 'up' | 'down') => {
+    if (!isLoggedIn) {
+      toast({
+        title: "Login necessário",
+        description: "Você precisa estar logado para votar.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     toast({
       title: "Voto registrado",
       description: "Obrigado por participar da comunidade!",
     });
   };
 
+  const handleComment = (topicId: number) => {
+    if (!isLoggedIn) {
+      toast({
+        title: "Login necessário",
+        description: "Você precisa estar logado para comentar.",
+        variant: "destructive"
+      });
+      return;
+    }
+    // Implement comment functionality
+  };
+
   const handleReport = (topicId: number) => {
+    if (!isLoggedIn) {
+      toast({
+        title: "Login necessário",
+        description: "Você precisa estar logado para denunciar conteúdo.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     toast({
       title: "Conteúdo reportado",
       description: "Nossa equipe de moderação irá analisar o conteúdo.",
@@ -120,6 +158,20 @@ export const TopicList = () => {
           </CardHeader>
           <CardContent>
             <p className="text-gray-700 mb-4">{topic.content}</p>
+            
+            {topic.images && topic.images.length > 0 && (
+              <div className="grid grid-cols-2 gap-2 mb-4">
+                {topic.images.map((image, index) => (
+                  <img
+                    key={index}
+                    src={image}
+                    alt={`Imagem ${index + 1}`}
+                    className="w-full h-48 object-cover rounded-lg"
+                  />
+                ))}
+              </div>
+            )}
+
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
                 <Button
@@ -140,7 +192,11 @@ export const TopicList = () => {
                   <ThumbsDown className="w-4 h-4" />
                 </Button>
               </div>
-              <Button variant="ghost" size="sm">
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => handleComment(topic.id)}
+              >
                 <MessageCircle className="w-4 h-4 mr-1" />
                 {topic.replies} respostas
               </Button>
