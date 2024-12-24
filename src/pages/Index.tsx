@@ -6,6 +6,10 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { FeaturedCompanions } from "@/components/home/FeaturedCompanions";
+import { PopularLocations } from "@/components/home/PopularLocations";
+import { HowItWorks } from "@/components/home/HowItWorks";
 
 interface IndexProps {
   city?: string;
@@ -20,7 +24,6 @@ const Index: React.FC<IndexProps> = ({ city }) => {
     queryFn: async () => {
       console.log('Fetching companions from Supabase...');
       
-      // In development, return demo data if Supabase is not configured
       if (import.meta.env.DEV && (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY)) {
         console.log('Using demo data in development mode');
         return [
@@ -38,7 +41,7 @@ const Index: React.FC<IndexProps> = ({ city }) => {
             city: 'São Paulo',
             state: 'SP'
           },
-          // Add more demo companions as needed
+          // Add more demo companions here
         ];
       }
 
@@ -71,8 +74,6 @@ const Index: React.FC<IndexProps> = ({ city }) => {
       console.log('Fetched companions:', data);
       return data || [];
     },
-    retry: 2,
-    staleTime: 5 * 60 * 1000, // 5 minutes
     meta: {
       onError: () => {
         toast({
@@ -129,25 +130,33 @@ const Index: React.FC<IndexProps> = ({ city }) => {
     <div className="min-h-screen bg-gray-50">
       <HeroSection />
       <main className="container mx-auto px-4 py-12">
-        <div className="space-y-12">
-          <SearchFilters 
-            viewMode={viewMode} 
-            setViewMode={setViewMode} 
-            onSearch={handleSearch}
-          />
+        <div className="space-y-16">
+          <FeaturedCompanions companions={companions?.slice(0, 4) || []} />
           
-          {companions && companions.length > 0 ? (
-            <CompanionGrid 
-              companions={companions} 
+          <HowItWorks />
+          
+          <div className="space-y-12">
+            <SearchFilters 
               viewMode={viewMode} 
+              setViewMode={setViewMode} 
+              onSearch={handleSearch}
             />
-          ) : (
-            <div className="text-center py-12">
-              <p className="text-gray-500">
-                Nenhuma acompanhante encontrada com os filtros selecionados.
-              </p>
-            </div>
-          )}
+            
+            {companions && companions.length > 0 ? (
+              <CompanionGrid 
+                companions={companions} 
+                viewMode={viewMode} 
+              />
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-gray-500">
+                  Nenhuma acompanhante encontrada com os filtros selecionados.
+                </p>
+              </div>
+            )}
+          </div>
+          
+          <PopularLocations />
         </div>
       </main>
     </div>
