@@ -14,6 +14,7 @@ import { CreatePostDialog } from "@/components/community/CreatePostDialog";
 import { useToast } from "@/hooks/use-toast";
 import { CommunityRules } from "@/components/community/CommunityRules";
 import { CommunityDiscussions } from "@/components/community/CommunityDiscussions";
+import { GuestView } from "@/components/community/GuestView";
 
 export const Community = () => {
   const [activeTab, setActiveTab] = useState("feed");
@@ -57,6 +58,16 @@ export const Community = () => {
     }
     setIsCreatePostOpen(true);
   };
+
+  if (!isLoggedIn) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-purple-50 to-pink-50">
+        <div className="container mx-auto px-4 py-12">
+          <GuestView />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 to-pink-50">

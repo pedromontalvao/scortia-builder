@@ -7,6 +7,7 @@ import { HeroSection } from "@/components/HeroSection";
 import { LoadingState } from "@/components/home/LoadingState";
 import { ErrorState } from "@/components/home/ErrorState";
 import { MainContent } from "@/components/home/MainContent";
+import { CommunityWidget } from "@/components/home/CommunityWidget";
 
 interface IndexProps {
   city?: string;
@@ -140,12 +141,18 @@ const Index: React.FC<IndexProps> = ({ city }) => {
       ) : error ? (
         <ErrorState />
       ) : (
-        <MainContent
-          companions={companions || []}
-          viewMode={viewMode}
-          setViewMode={setViewMode}
-          handleSearch={handleSearch}
-        />
+        <>
+          <MainContent
+            companions={companions || []}
+            viewMode={viewMode}
+            setViewMode={setViewMode}
+            handleSearch={handleSearch}
+          />
+          
+          <div className="container mx-auto px-4 py-12">
+            <CommunityWidget />
+          </div>
+        </>
       )}
     </div>
   );
