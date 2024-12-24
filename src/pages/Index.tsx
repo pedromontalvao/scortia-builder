@@ -34,14 +34,13 @@ const Index: React.FC<IndexProps> = ({ city }) => {
             reviews: 24,
             price: 300,
             services: ['Massagem', 'Jantar', 'Eventos'],
-            companion_photos: [{ url: '/demo/ana-1.jpg' }],
+            imageUrl: '/demo/ana-1.jpg',
             is_premium: true,
             is_verified: true,
             neighborhood: 'Centro',
             city: 'São Paulo',
             state: 'SP'
           },
-          // Add more demo companions here
         ];
       }
 
@@ -71,8 +70,14 @@ const Index: React.FC<IndexProps> = ({ city }) => {
         throw error;
       }
       
-      console.log('Fetched companions:', data);
-      return data || [];
+      // Map the data to include imageUrl
+      const processedData = data?.map(companion => ({
+        ...companion,
+        imageUrl: companion.companion_photos?.[0]?.url || '/placeholder.svg'
+      })) || [];
+
+      console.log('Fetched and processed companions:', processedData);
+      return processedData;
     },
     meta: {
       onError: () => {
