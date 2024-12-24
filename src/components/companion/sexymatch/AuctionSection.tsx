@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Trophy, DollarSign, Users, Timer } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import { format, differenceInSeconds } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import {
   AlertDialog,
@@ -34,14 +34,36 @@ interface AuctionSectionProps {
 
 export const AuctionSection = ({
   companionId,
-  currentPrice,
+  currentPrice = 1, // Starting at R$1
   endTime,
   highestBid,
   totalBids
 }: AuctionSectionProps) => {
   const [bidAmount, setBidAmount] = useState("");
+  const [timeLeft, setTimeLeft] = useState("");
   const { toast } = useToast();
-  const timeLeft = formatDistanceToNow(endTime, { locale: ptBR, addSuffix: true });
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const secondsLeft = differenceInSeconds(endTime, new Date());
+      
+      if (secondsLeft <= 0) {
+        setTimeLeft("Leilão encerrado");
+        clearInterval(timer);
+        return;
+      }
+
+      const hours = Math.floor(secondsLeft / 3600);
+      const minutes = Math.floor((secondsLeft % 3600) / 60);
+      const seconds = secondsLeft % 60;
+
+      setTimeLeft(
+        `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+      );
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [endTime]);
 
   const handleBid = () => {
     const amount = Number(bidAmount);
@@ -64,7 +86,6 @@ export const AuctionSection = ({
       return;
     }
 
-    // Here we would handle the actual bid submission to Supabase
     console.log("Submitting bid:", { companionId, amount });
   };
 
@@ -89,9 +110,9 @@ export const AuctionSection = ({
               <div className="text-sm text-gray-600">Lance Atual</div>
             </div>
             
-            <div className="text-center p-4 bg-white/50 rounded-lg">
+            <div className="text-center p-4 bg-white/50 rounded-lg col-span-2">
               <Timer className="w-6 h-6 text-orange-500 mx-auto mb-2" />
-              <div className="text-lg font-medium text-gray-900">
+              <div className="text-3xl font-bold text-orange-600 font-mono">
                 {timeLeft}
               </div>
               <div className="text-sm text-gray-600">Tempo Restante</div>
@@ -104,14 +125,6 @@ export const AuctionSection = ({
               </div>
               <div className="text-sm text-gray-600">Total de Lances</div>
             </div>
-            
-            <div className="text-center p-4 bg-white/50 rounded-lg">
-              <Trophy className="w-6 h-6 text-yellow-500 mx-auto mb-2" />
-              <div className="text-lg font-medium text-gray-900">
-                {highestBid ? `R$ ${highestBid.amount}` : "Sem lances"}
-              </div>
-              <div className="text-sm text-gray-600">Maior Lance</div>
-            </div>
           </div>
 
           <div className="space-y-4">
@@ -122,6 +135,8 @@ export const AuctionSection = ({
                 onChange={(e) => setBidAmount(e.target.value)}
                 placeholder="Digite seu lance"
                 className="flex-1"
+                min={currentPrice + 1}
+                step="1"
               />
               <AlertDialog>
                 <AlertDialogTrigger asChild>
@@ -150,7 +165,7 @@ export const AuctionSection = ({
             </div>
             
             <div className="text-sm text-gray-500">
-              * Lance mínimo: R$ {currentPrice + 50}
+              * Lance mínimo: R$ {currentPrice + 1}
             </div>
           </div>
         </div>
