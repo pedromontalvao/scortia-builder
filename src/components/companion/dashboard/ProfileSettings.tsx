@@ -79,21 +79,48 @@ export const ProfileSettings = () => {
 
       console.log('Current profile data:', profile);
 
-      // Ensure we have a user_id in the data
+      // Create a new object with all required fields
       const dataToSave = {
         user_id: user.id,
-        ...profile, // Keep existing profile data
+        ...(profile || {}), // Keep existing profile data if it exists
         ...formData, // Merge with new form data
         updated_at: new Date().toISOString()
       };
 
       console.log('Attempting to save data:', dataToSave);
 
-      const { data: savedData, error } = await supabase
+      // First, check if a profile exists
+      const { data: existingProfile } = await supabase
         .from('companions')
-        .upsert(dataToSave)
-        .select()
+        .select('id')
+        .eq('user_id', user.id)
         .single();
+
+      let savedData;
+      let error;
+
+      if (existingProfile) {
+        console.log('Updating existing profile...');
+        const result = await supabase
+          .from('companions')
+          .update(dataToSave)
+          .eq('user_id', user.id)
+          .select()
+          .single();
+        
+        savedData = result.data;
+        error = result.error;
+      } else {
+        console.log('Creating new profile...');
+        const result = await supabase
+          .from('companions')
+          .insert(dataToSave)
+          .select()
+          .single();
+        
+        savedData = result.data;
+        error = result.error;
+      }
 
       if (error) {
         console.error('Error saving profile:', error);
