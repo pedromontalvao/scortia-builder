@@ -1,16 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { CompanionGrid } from "@/components/home/CompanionGrid";
-import { SearchFilters } from "@/components/home/SearchFilters";
-import { HeroSection } from "@/components/HeroSection";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { FeaturedCompanions } from "@/components/home/FeaturedCompanions";
-import { PopularLocations } from "@/components/home/PopularLocations";
-import { HowItWorks } from "@/components/home/HowItWorks";
 import { useLocation } from "react-router-dom";
+import { supabase } from "@/lib/supabase";
+import { HeroSection } from "@/components/HeroSection";
+import { LoadingState } from "@/components/home/LoadingState";
+import { ErrorState } from "@/components/home/ErrorState";
+import { MainContent } from "@/components/home/MainContent";
 
 interface IndexProps {
   city?: string;
@@ -31,8 +27,6 @@ const Index: React.FC<IndexProps> = ({ city }) => {
         
         console.log("User location detected:", position.coords);
         
-        // You could use these coordinates to fetch nearby companions
-        // For now, we'll just show a toast
         toast({
           title: "Localização detectada",
           description: "Mostrando acompanhantes próximas a você.",
@@ -98,7 +92,7 @@ const Index: React.FC<IndexProps> = ({ city }) => {
       console.log('Fetched companions data:', data);
       return data || [];
     },
-    refetchInterval: 5 * 60 * 1000, // Auto-refresh every 5 minutes
+    refetchInterval: 5 * 60 * 1000,
     meta: {
       onError: () => {
         toast({
@@ -126,89 +120,33 @@ const Index: React.FC<IndexProps> = ({ city }) => {
   // Track page views
   useEffect(() => {
     console.log('Page view:', location.pathname);
-    // You could send this to an analytics service
   }, [location]);
 
   const handleSearch = (filters: any) => {
     console.log("Search filters:", filters);
-    // Save recent searches
     const recentSearches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
     recentSearches.unshift(filters);
     localStorage.setItem('recentSearches', JSON.stringify(recentSearches.slice(0, 5)));
   };
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <HeroSection />
-        <main className="container mx-auto px-4 py-8">
-          <div className="flex flex-col items-center justify-center gap-4 min-h-[400px]">
-            <Loader2 className="h-12 w-12 animate-spin text-pink-500" />
-            <p className="text-gray-500">Carregando acompanhantes...</p>
-          </div>
-        </main>
-      </div>
-    );
-  }
-
-  if (error) {
-    console.error('Error loading companions:', error);
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <HeroSection />
-        <main className="container mx-auto px-4 py-8">
-          <div className="text-center space-y-4">
-            <p className="text-red-500 font-medium">
-              Erro ao carregar acompanhantes. Por favor, tente novamente mais tarde.
-            </p>
-            <Button 
-              onClick={() => window.location.reload()}
-              variant="outline"
-            >
-              Tentar novamente
-            </Button>
-          </div>
-        </main>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      <HeroSection />
-      <main className="container mx-auto px-4 py-12">
-        <div className="space-y-16">
-          {companions && <FeaturedCompanions companions={companions} />}
-          
-          <HowItWorks />
-          
-          <div className="space-y-12">
-            <SearchFilters 
-              viewMode={viewMode} 
-              setViewMode={setViewMode} 
-              onSearch={handleSearch}
-            />
-            
-            {companions && companions.length > 0 ? (
-              <CompanionGrid 
-                companions={companions.map(companion => ({
-                  ...companion,
-                  imageUrl: companion.companion_photos?.[0]?.url || '/placeholder.svg'
-                }))}
-                viewMode={viewMode} 
-              />
-            ) : (
-              <div className="text-center py-12">
-                <p className="text-gray-500">
-                  Nenhuma acompanhante encontrada com os filtros selecionados.
-                </p>
-              </div>
-            )}
-          </div>
-          
-          <PopularLocations />
-        </div>
-      </main>
+    <div className="min-h-screen bg-gradient-to-b from-pink-50 to-white transition-colors duration-500">
+      <div className="animate-fade-in">
+        <HeroSection />
+      </div>
+      
+      {isLoading ? (
+        <LoadingState />
+      ) : error ? (
+        <ErrorState />
+      ) : (
+        <MainContent
+          companions={companions || []}
+          viewMode={viewMode}
+          setViewMode={setViewMode}
+          handleSearch={handleSearch}
+        />
+      )}
     </div>
   );
 };
