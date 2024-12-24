@@ -1,14 +1,17 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CommunityDiscussions } from "@/components/community/CommunityDiscussions";
-import { CommunityReviews } from "@/components/community/CommunityReviews";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 import { CommunityStats } from "@/components/community/CommunityStats";
+import { TopicList } from "@/components/community/TopicList";
+import { CategoryList } from "@/components/community/CategoryList";
+import { CommunityReviews } from "@/components/community/CommunityReviews";
 
 export const Community = () => {
-  const [activeTab, setActiveTab] = useState("discussions");
+  const [activeTab, setActiveTab] = useState("forum");
 
   const { data: stats, isLoading: isLoadingStats } = useQuery({
     queryKey: ['community-stats'],
@@ -36,23 +39,35 @@ export const Community = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 to-pink-50">
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-4xl font-bold text-center mb-8 bg-gradient-to-r from-purple-600 to-pink-600 text-transparent bg-clip-text">
-          Comunidade VivAcompanhantes
-        </h1>
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 text-transparent bg-clip-text">
+            Comunidade VivAcompanhantes
+          </h1>
+          <Button>
+            <Plus className="w-4 h-4 mr-2" />
+            Criar Tópico
+          </Button>
+        </div>
 
         <CommunityStats stats={stats} isLoading={isLoadingStats} />
 
+        <Card className="mt-8">
+          <CardContent className="p-6">
+            <CategoryList />
+          </CardContent>
+        </Card>
+
         <Tabs defaultValue={activeTab} className="mt-8" onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="discussions">Discussões</TabsTrigger>
+            <TabsTrigger value="forum">Fórum</TabsTrigger>
             <TabsTrigger value="reviews">Avaliações</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="discussions">
-            <CommunityDiscussions />
+          <TabsContent value="forum" className="mt-6">
+            <TopicList />
           </TabsContent>
 
-          <TabsContent value="reviews">
+          <TabsContent value="reviews" className="mt-6">
             <CommunityReviews />
           </TabsContent>
         </Tabs>
