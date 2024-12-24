@@ -43,7 +43,23 @@ export const CompanionProfile = () => {
         whatsapp={companion.whatsapp}
       />
       
-      <ProfileContent companion={companion} />
+      <div className="container mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="lg:col-span-8">
+            <ProfileContent companion={companion} />
+          </div>
+          <div className="lg:col-span-4">
+            <CommunityProfile
+              userId={companion.user_id}
+              posts={companion.community_posts || []}
+              followers={companion.followers || 0}
+              following={companion.following || 0}
+              subscriptionPrice={companion.subscription_price}
+              hasActiveSubscription={companion.has_active_subscription}
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

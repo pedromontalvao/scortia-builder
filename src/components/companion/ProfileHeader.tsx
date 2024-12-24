@@ -75,7 +75,7 @@ export const ProfileHeader = ({
   };
 
   return (
-    <div className="relative min-h-[60vh] md:min-h-[70vh]">
+    <div className="relative min-h-[40vh] md:min-h-[50vh]">
       <div className="absolute inset-0">
         <img 
           src={imageUrl} 
