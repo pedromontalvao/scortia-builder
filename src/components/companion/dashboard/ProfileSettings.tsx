@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ProfileSettingsHeader } from "./settings/ProfileSettingsHeader";
@@ -26,10 +26,11 @@ export const ProfileSettings = () => {
         .eq('user_id', user.id)
         .single();
 
-      if (error) {
+      if (error && error.code !== 'PGRST116') {
         console.error('Error fetching profile:', error);
         throw error;
       }
+      
       console.log('Profile data:', data);
       return data;
     }
@@ -88,7 +89,10 @@ export const ProfileSettings = () => {
           ...updatedData
         });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error saving profile:', error);
+        throw error;
+      }
 
       await queryClient.invalidateQueries({ queryKey: ['companion-profile'] });
 
@@ -126,7 +130,10 @@ export const ProfileSettings = () => {
 
       const { error } = await supabase
         .from('companions')
-        .update({ is_published: true })
+        .update({ 
+          is_published: true,
+          published_at: new Date().toISOString()
+        })
         .eq('user_id', user.id);
 
       if (error) throw error;

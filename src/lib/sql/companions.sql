@@ -7,8 +7,10 @@ CREATE TABLE IF NOT EXISTS companions (
   user_id UUID UNIQUE REFERENCES auth.users(id),
   name VARCHAR(255) NOT NULL,
   email VARCHAR(255) UNIQUE NOT NULL,
-  phone VARCHAR(20),
+  whatsapp VARCHAR(20),
   description TEXT,
+  cep VARCHAR(9),
+  street VARCHAR(255),
   neighborhood VARCHAR(100),
   city VARCHAR(100),
   state VARCHAR(50),
@@ -20,9 +22,14 @@ CREATE TABLE IF NOT EXISTS companions (
   height INTEGER,
   weight INTEGER,
   measurements VARCHAR(50),
-  is_verified BOOLEAN DEFAULT false,
-  is_premium BOOLEAN DEFAULT false,
+  availability JSONB,
   price DECIMAL(10,2),
+  is_verified BOOLEAN DEFAULT false,
+  verified_at TIMESTAMP WITH TIME ZONE,
+  is_premium BOOLEAN DEFAULT false,
+  premium_updated_at TIMESTAMP WITH TIME ZONE,
+  is_published BOOLEAN DEFAULT false,
+  published_at TIMESTAMP WITH TIME ZONE,
   rating DECIMAL(3,2),
   reviews INTEGER DEFAULT 0,
   service_areas TEXT[],
@@ -37,6 +44,18 @@ CREATE TABLE IF NOT EXISTS companion_photos (
   url TEXT NOT NULL,
   is_primary BOOLEAN DEFAULT false,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create companion_stats table
+CREATE TABLE IF NOT EXISTS companion_stats (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  companion_id UUID REFERENCES companions(id) ON DELETE CASCADE,
+  total_views INTEGER DEFAULT 0,
+  total_messages INTEGER DEFAULT 0,
+  total_appointments INTEGER DEFAULT 0,
+  total_favorites INTEGER DEFAULT 0,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Create verification_requests table
@@ -59,13 +78,17 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
--- Create trigger for companions table
+-- Create triggers for all tables
 CREATE TRIGGER update_companions_updated_at
     BEFORE UPDATE ON companions
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
 
--- Create trigger for verification_requests table
+CREATE TRIGGER update_companion_stats_updated_at
+    BEFORE UPDATE ON companion_stats
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
 CREATE TRIGGER update_verification_requests_updated_at
     BEFORE UPDATE ON verification_requests
     FOR EACH ROW
@@ -74,6 +97,7 @@ CREATE TRIGGER update_verification_requests_updated_at
 -- Create RLS policies
 ALTER TABLE companions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE companion_photos ENABLE ROW LEVEL SECURITY;
+ALTER TABLE companion_stats ENABLE ROW LEVEL SECURITY;
 ALTER TABLE verification_requests ENABLE ROW LEVEL SECURITY;
 
 -- Policies for companions table
@@ -113,6 +137,15 @@ USING (
     AND user_id = auth.uid()
   )
 );
+
+-- Policies for companion_stats table
+CREATE POLICY "Public stats are viewable by everyone"
+ON companion_stats FOR SELECT
+USING (true);
+
+CREATE POLICY "Only system can update stats"
+ON companion_stats FOR UPDATE
+USING (false);
 
 -- Policies for verification_requests table
 CREATE POLICY "Companions can view their own verification requests"
