@@ -39,9 +39,16 @@ export const Footer = () => {
               <li><Button variant="link" className="text-gray-400 hover:text-pink-500 p-0 h-auto">Login</Button></li>
               <li><Button variant="link" className="text-gray-400 hover:text-pink-500 p-0 h-auto">Blog</Button></li>
               <li>
-                <Link to="/sitemap">
+                <Link to="/comunidade">
                   <Button variant="link" className="text-gray-400 hover:text-pink-500 p-0 h-auto">
-                    Mapa do Site
+                    Comunidade
+                  </Button>
+                </Link>
+              </li>
+              <li>
+                <Link to="/cidades">
+                  <Button variant="link" className="text-gray-400 hover:text-pink-500 p-0 h-auto">
+                    Cidades
                   </Button>
                 </Link>
               </li>

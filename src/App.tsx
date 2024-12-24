@@ -15,6 +15,7 @@ import { Analytics } from "@/components/companion/dashboard/Analytics";
 import { Subscription } from "@/components/companion/dashboard/Subscription";
 import VarzeaGrande from "./pages/cities/VarzeaGrande";
 import { CitiesDirectory } from "./pages/CitiesDirectory";
+import { Community } from "./pages/Community";
 import { CompanionRegistrationForm } from "@/components/companion/registration/CompanionRegistrationForm";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -43,6 +44,7 @@ const App = () => {
                   <Route path="/" element={<Index />} />
                   <Route path="/varzea-grande" element={<VarzeaGrande />} />
                   <Route path="/cidades" element={<CitiesDirectory />} />
+                  <Route path="/comunidade" element={<Community />} />
                   <Route path="/acompanhante/:id" element={<CompanionProfile />} />
                   <Route path="/cadastro-acompanhante" element={<CompanionRegistrationForm />} />
                   <Route path="/painel" element={<CompanionDashboard />}>
