@@ -1,7 +1,9 @@
-import { ArrowLeft, Crown, Heart, Share2, Star } from "lucide-react";
+import { ArrowLeft, Crown, Heart, Share2, Star, Shield, MessageSquare } from "lucide-react";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 interface ProfileHeaderProps {
   name: string;
@@ -35,44 +37,76 @@ export const ProfileHeader = ({
   imageUrl,
 }: ProfileHeaderProps) => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [isLiked, setIsLiked] = useState(false);
+
+  const handleShare = async () => {
+    try {
+      await navigator.share({
+        title: name,
+        text: description,
+        url: window.location.href,
+      });
+    } catch (error) {
+      console.error('Error sharing:', error);
+      toast({
+        title: "Erro ao compartilhar",
+        description: "Não foi possível compartilhar o perfil.",
+        variant: "destructive"
+      });
+    }
+  };
 
   return (
     <div className="relative h-[60vh] bg-gradient-to-r from-purple-900 to-pink-900">
       <div className="absolute inset-0 bg-black/40">
-        <img src={imageUrl} alt={name} className="w-full h-full object-cover mix-blend-overlay" />
+        <img 
+          src={imageUrl} 
+          alt={name} 
+          className="w-full h-full object-cover mix-blend-overlay animate-fade-in" 
+        />
         <div className="container mx-auto px-4 h-full">
           <div className="flex items-start justify-between pt-6">
             <Button 
               variant="ghost" 
-              className="text-white hover:bg-white/20" 
+              className="text-white hover:bg-white/20 backdrop-blur-sm" 
               onClick={() => navigate(-1)}
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
               Voltar
             </Button>
             <div className="flex gap-2">
-              <Button variant="ghost" className="text-white hover:bg-white/20">
-                <Heart className="mr-2 h-4 w-4" />
+              <Button 
+                variant="ghost" 
+                className={`text-white hover:bg-white/20 backdrop-blur-sm ${isLiked ? 'text-pink-500' : ''}`}
+                onClick={() => setIsLiked(!isLiked)}
+              >
+                <Heart className={`mr-2 h-4 w-4 ${isLiked ? 'fill-current' : ''}`} />
                 Favoritar
               </Button>
-              <Button variant="ghost" className="text-white hover:bg-white/20">
+              <Button 
+                variant="ghost" 
+                className="text-white hover:bg-white/20 backdrop-blur-sm"
+                onClick={handleShare}
+              >
                 <Share2 className="mr-2 h-4 w-4" />
                 Compartilhar
               </Button>
             </div>
           </div>
           
-          <div className="absolute bottom-6 text-white">
+          <div className="absolute bottom-6 text-white animate-fade-in animation-delay-200">
             <div className="flex items-center gap-2 mb-2">
               <h1 className="text-4xl font-bold">{name}</h1>
               {isPremium && (
-                <Badge className="bg-yellow-500">
+                <Badge className="bg-yellow-500/90 backdrop-blur-sm">
                   <Crown className="w-4 h-4 mr-1" />
                   Premium
                 </Badge>
               )}
               {isVerified && (
-                <Badge className="bg-green-500">
+                <Badge className="bg-green-500/90 backdrop-blur-sm">
+                  <Shield className="w-4 h-4 mr-1" />
                   Verificada
                 </Badge>
               )}
@@ -89,9 +123,12 @@ export const ProfileHeader = ({
             </div>
 
             <div className="flex items-center gap-6 mt-4 text-sm text-gray-300">
+              <div className="flex items-center gap-1">
+                <MessageSquare className="w-4 h-4" />
+                {messages} mensagens
+              </div>
               <div>{views} visualizações</div>
               <div>{likes} curtidas</div>
-              <div>{messages} mensagens</div>
             </div>
           </div>
         </div>

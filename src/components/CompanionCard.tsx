@@ -1,7 +1,9 @@
-import { Star, MapPin, Crown, Shield } from "lucide-react";
+import { Star, MapPin, Crown, Shield, Heart } from "lucide-react";
 import { Badge } from "./ui/badge";
 import { Card } from "./ui/card";
 import { Link } from "react-router-dom";
+import { Button } from "./ui/button";
+import { useState } from "react";
 
 interface CompanionCardProps {
   id: string;
@@ -32,30 +34,50 @@ export const CompanionCard = ({
   city,
   state
 }: CompanionCardProps) => {
+  const [isHovered, setIsHovered] = useState(false);
   const locationString = [neighborhood, city, state].filter(Boolean).join(", ");
 
   return (
     <Link to={`/acompanhante/${id}`}>
-      <Card className="group overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1 duration-300">
+      <Card 
+        className="group overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1 duration-300"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
         <div className="relative aspect-[3/4] overflow-hidden">
           <img
             src={imageUrl}
             alt={name}
-            className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
+            className={`object-cover w-full h-full transition-transform duration-500 ${
+              isHovered ? 'scale-110' : 'scale-100'
+            }`}
           />
           <div className="absolute top-0 left-0 right-0 p-4 flex justify-between items-start">
-            {isPremium && (
-              <Badge className="bg-yellow-500/90 backdrop-blur-sm">
-                <Crown className="w-4 h-4 mr-1" />
-                Premium
-              </Badge>
-            )}
-            {isVerified && (
-              <Badge className="bg-green-500/90 backdrop-blur-sm">
-                <Shield className="w-4 h-4 mr-1" />
-                Verificada
-              </Badge>
-            )}
+            <div className="flex gap-2">
+              {isPremium && (
+                <Badge className="bg-yellow-500/90 backdrop-blur-sm">
+                  <Crown className="w-4 h-4 mr-1" />
+                  Premium
+                </Badge>
+              )}
+              {isVerified && (
+                <Badge className="bg-green-500/90 backdrop-blur-sm">
+                  <Shield className="w-4 h-4 mr-1" />
+                  Verificada
+                </Badge>
+              )}
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-white hover:bg-white/20 backdrop-blur-sm"
+              onClick={(e) => {
+                e.preventDefault();
+                // Add to favorites logic here
+              }}
+            >
+              <Heart className="w-5 h-5" />
+            </Button>
           </div>
         </div>
         
@@ -95,7 +117,7 @@ export const CompanionCard = ({
                   R$ {price}
                 </p>
               </div>
-              <Badge variant="outline" className="bg-pink-50">
+              <Badge variant="outline" className="bg-pink-50 group-hover:bg-pink-100 transition-colors">
                 Ver perfil
               </Badge>
             </div>

@@ -1,4 +1,4 @@
-import { Search, MapPin, Star, Shield } from "lucide-react";
+import { Search, MapPin, Star, Shield, ArrowRight } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 
@@ -12,11 +12,11 @@ export const HeroSection = () => {
           <h1 className="text-4xl md:text-6xl font-bold animate-fade-in">
             Encontre a Companhia Perfeita
           </h1>
-          <p className="text-xl md:text-2xl max-w-2xl mx-auto">
+          <p className="text-xl md:text-2xl max-w-2xl mx-auto animate-fade-in animation-delay-200">
             As melhores acompanhantes em um só lugar, com segurança e discrição
           </p>
           
-          <div className="max-w-3xl mx-auto">
+          <div className="max-w-3xl mx-auto animate-fade-in animation-delay-300">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
@@ -26,15 +26,16 @@ export const HeroSection = () => {
                   className="pl-10 h-12 w-full bg-white/90 text-gray-900 backdrop-blur-sm"
                 />
               </div>
-              <Button className="h-12 px-8 bg-[#15171E] hover:bg-gray-900">
+              <Button className="h-12 px-8 bg-[#15171E] hover:bg-gray-900 group">
                 Buscar
+                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Button>
             </div>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-white">
-          <div className="flex items-center gap-4 bg-white/10 p-6 rounded-lg backdrop-blur-sm">
+          <div className="flex items-center gap-4 bg-white/10 p-6 rounded-lg backdrop-blur-sm hover:bg-white/20 transition-colors">
             <MapPin className="h-10 w-10" />
             <div>
               <h3 className="font-semibold text-lg">Localização</h3>
@@ -42,7 +43,7 @@ export const HeroSection = () => {
             </div>
           </div>
           
-          <div className="flex items-center gap-4 bg-white/10 p-6 rounded-lg backdrop-blur-sm">
+          <div className="flex items-center gap-4 bg-white/10 p-6 rounded-lg backdrop-blur-sm hover:bg-white/20 transition-colors">
             <Star className="h-10 w-10" />
             <div>
               <h3 className="font-semibold text-lg">Avaliações</h3>
@@ -50,7 +51,7 @@ export const HeroSection = () => {
             </div>
           </div>
           
-          <div className="flex items-center gap-4 bg-white/10 p-6 rounded-lg backdrop-blur-sm">
+          <div className="flex items-center gap-4 bg-white/10 p-6 rounded-lg backdrop-blur-sm hover:bg-white/20 transition-colors">
             <Shield className="h-10 w-10" />
             <div>
               <h3 className="font-semibold text-lg">Segurança</h3>
