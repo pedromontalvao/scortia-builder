@@ -1,4 +1,4 @@
-import { ArrowLeft, Crown, Heart, Share2, Star, Shield, MessageSquare } from "lucide-react";
+import { MessageSquare, Crown, Heart, Share2, Star, Shield } from "lucide-react";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { useNavigate } from "react-router-dom";
@@ -90,7 +90,6 @@ export const ProfileHeader = ({
                 className="text-white hover:bg-white/20 backdrop-blur-sm animate-fade-in animation-delay-200" 
                 onClick={() => navigate(-1)}
               >
-                <ArrowLeft className="mr-2 h-4 w-4" />
                 Voltar
               </Button>
               <div className="flex gap-2 animate-fade-in animation-delay-300">
@@ -99,40 +98,50 @@ export const ProfileHeader = ({
                   className={`text-white hover:bg-white/20 backdrop-blur-sm ${isLiked ? 'text-pink-500' : ''}`}
                   onClick={() => setIsLiked(!isLiked)}
                 >
-                  <Heart className={`mr-2 h-4 w-4 ${isLiked ? 'fill-current animate-scale-in' : ''}`} />
-                  <span className="hidden sm:inline">Favoritar</span>
+                  <Heart className={`h-4 w-4 ${isLiked ? 'fill-current animate-scale-in' : ''}`} />
                 </Button>
                 <Button 
                   variant="ghost" 
                   className="text-white hover:bg-white/20 backdrop-blur-sm"
                   onClick={handleShare}
                 >
-                  <Share2 className="mr-2 h-4 w-4" />
-                  <span className="hidden sm:inline">Compartilhar</span>
+                  <Share2 className="h-4 w-4" />
                 </Button>
               </div>
             </div>
             
             <div className="mt-auto pb-6 text-white animate-fade-in animation-delay-200">
-              <div className="flex flex-wrap items-center gap-2 mb-2">
-                <h1 className="text-3xl md:text-4xl font-bold">{name}</h1>
-                <div className="flex flex-wrap gap-2">
-                  {isPremium && (
-                    <Badge className="bg-yellow-500/90 backdrop-blur-sm animate-scale-in">
-                      <Crown className="w-4 h-4 mr-1" />
-                      Premium
-                    </Badge>
-                  )}
-                  {isVerified && (
-                    <Badge className="bg-green-500/90 backdrop-blur-sm animate-scale-in">
-                      <Shield className="w-4 h-4 mr-1" />
-                      Verificada
-                    </Badge>
-                  )}
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+                <div className="space-y-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h1 className="text-3xl md:text-4xl font-bold">{name}</h1>
+                    <div className="flex flex-wrap gap-2">
+                      {isPremium && (
+                        <Badge className="bg-yellow-500/90 backdrop-blur-sm animate-scale-in">
+                          <Crown className="w-4 h-4 mr-1" />
+                          Premium
+                        </Badge>
+                      )}
+                      {isVerified && (
+                        <Badge className="bg-green-500/90 backdrop-blur-sm animate-scale-in">
+                          <Shield className="w-4 h-4 mr-1" />
+                          Verificada
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                  <p className="text-gray-200 max-w-2xl text-sm md:text-base">{description}</p>
                 </div>
+                
+                <Button 
+                  onClick={handleWhatsAppClick}
+                  size="lg"
+                  className="bg-green-500 hover:bg-green-600 text-white animate-scale-in animation-delay-500 hover:scale-105 transition-transform"
+                >
+                  <MessageSquare className="w-5 h-5 mr-2" />
+                  Chamar no WhatsApp
+                </Button>
               </div>
-              
-              <p className="text-gray-200 mb-4 max-w-2xl text-sm md:text-base">{description}</p>
               
               <div className="flex flex-wrap items-center gap-4 text-gray-200 text-sm md:text-base mb-4">
                 <div className="flex items-center gap-1">
@@ -143,23 +152,13 @@ export const ProfileHeader = ({
                 <div>{location}</div>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-                <div className="flex flex-wrap gap-4 text-sm text-gray-300">
-                  <div className="flex items-center gap-1">
-                    <MessageSquare className="w-4 h-4" />
-                    {messages} mensagens
-                  </div>
-                  <div>{views} visualizações</div>
-                  <div>{likes} curtidas</div>
+              <div className="flex flex-wrap gap-4 text-sm text-gray-300">
+                <div className="flex items-center gap-1">
+                  <MessageSquare className="w-4 h-4" />
+                  {messages} mensagens
                 </div>
-                
-                <Button 
-                  onClick={handleWhatsAppClick}
-                  className="bg-green-500 hover:bg-green-600 text-white animate-scale-in animation-delay-500 hover:scale-105 transition-transform w-full sm:w-auto"
-                >
-                  <MessageSquare className="w-4 h-4 mr-2" />
-                  Chamar no WhatsApp
-                </Button>
+                <div>{views} visualizações</div>
+                <div>{likes} curtidas</div>
               </div>
             </div>
           </div>
