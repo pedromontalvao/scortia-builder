@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/lib/supabase";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/lib/supabase";
+import { saveProfile } from "@/lib/profile";
 import { ProfileSettingsHeader } from "./settings/ProfileSettingsHeader";
 import { ProfileSettingsTabs } from "./settings/ProfileSettingsTabs";
+import { CompanionProfile } from "@/types/companion";
 
 export const ProfileSettings = () => {
   const { toast } = useToast();
@@ -36,100 +38,15 @@ export const ProfileSettings = () => {
     }
   });
 
-  const isProfileComplete = (profile: any) => {
-    const requiredFields = [
-      'name',
-      'description',
-      'cep',
-      'street',
-      'state',
-      'city',
-      'neighborhood',
-      'whatsapp',
-      'services',
-      'ethnicity',
-      'body_type',
-      'hair_color',
-      'breast_type',
-      'height',
-      'weight',
-      'measurements',
-      'availability'
-    ];
-
-    return requiredFields.every(field => {
-      const hasField = profile && profile[field];
-      if (!hasField) {
-        console.log(`Missing required field: ${field}`);
-      }
-      return hasField;
-    });
-  };
-
-  const handleSave = async (formData: any) => {
+  const handleSave = async (formData: Partial<CompanionProfile>) => {
     console.log('Starting save operation with form data:', formData);
     setIsSaving(true);
     
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        console.error('No authenticated user found');
-        throw new Error("User not authenticated");
-      }
+      const { data, error } = await saveProfile(formData);
+      
+      if (error) throw error;
 
-      console.log('Current profile data:', profile);
-
-      // Create a new object with all required fields
-      const dataToSave = {
-        user_id: user.id,
-        ...(profile || {}), // Keep existing profile data if it exists
-        ...formData, // Merge with new form data
-        updated_at: new Date().toISOString()
-      };
-
-      console.log('Attempting to save data:', dataToSave);
-
-      // First, check if a profile exists
-      const { data: existingProfile } = await supabase
-        .from('companions')
-        .select('id')
-        .eq('user_id', user.id)
-        .single();
-
-      let savedData;
-      let error;
-
-      if (existingProfile) {
-        console.log('Updating existing profile...');
-        const result = await supabase
-          .from('companions')
-          .update(dataToSave)
-          .eq('user_id', user.id)
-          .select()
-          .single();
-        
-        savedData = result.data;
-        error = result.error;
-      } else {
-        console.log('Creating new profile...');
-        const result = await supabase
-          .from('companions')
-          .insert(dataToSave)
-          .select()
-          .single();
-        
-        savedData = result.data;
-        error = result.error;
-      }
-
-      if (error) {
-        console.error('Error saving profile:', error);
-        throw error;
-      }
-
-      console.log('Successfully saved profile:', savedData);
-
-      // Update the cache with the new data
       await queryClient.invalidateQueries({ queryKey: ['companion-profile'] });
 
       toast({
@@ -204,7 +121,7 @@ export const ProfileSettings = () => {
   return (
     <Card className="w-full">
       <ProfileSettingsHeader
-        isProfileComplete={isProfileComplete(profile)}
+        isProfileComplete={isProfileComplete}
         isPublished={profile?.is_published}
         isPublishing={isPublishing}
         onPublish={handlePublish}
@@ -218,4 +135,37 @@ export const ProfileSettings = () => {
       />
     </Card>
   );
+};
+
+// Helper function to check if profile is complete
+const isProfileComplete = (profile: CompanionProfile | null) => {
+  if (!profile) return false;
+  
+  const requiredFields = [
+    'name',
+    'description',
+    'cep',
+    'street',
+    'state',
+    'city',
+    'neighborhood',
+    'whatsapp',
+    'services',
+    'ethnicity',
+    'body_type',
+    'hair_color',
+    'breast_type',
+    'height',
+    'weight',
+    'measurements',
+    'availability'
+  ];
+
+  return requiredFields.every(field => {
+    const hasField = profile[field as keyof CompanionProfile];
+    if (!hasField) {
+      console.log(`Missing required field: ${field}`);
+    }
+    return hasField;
+  });
 };
