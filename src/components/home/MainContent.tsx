@@ -5,7 +5,6 @@ import { CompanionGrid } from "./CompanionGrid";
 import { PopularLocations } from "./PopularLocations";
 import { CommunityCallout } from "./CommunityCallout";
 import { CommunityWidget } from "./CommunityWidget";
-import { SexyMatchWidget } from "./SexyMatchWidget";
 import { useInView } from "react-intersection-observer";
 
 interface MainContentProps {
@@ -49,7 +48,6 @@ export const MainContent = ({
       </div>
 
       <div className="space-y-8">
-        <SexyMatchWidget />
         <CommunityCallout />
         <CommunityWidget />
       </div>
