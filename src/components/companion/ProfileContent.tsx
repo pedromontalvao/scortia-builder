@@ -7,6 +7,7 @@ import { AudioSection } from "./AudioSection";
 import { Measurements } from "./Measurements";
 import { Reviews } from "./Reviews";
 import { Statistics } from "./Statistics";
+import { AuctionSection } from "./sexymatch/AuctionSection";
 import { useToast } from "@/hooks/use-toast";
 
 interface ProfileContentProps {
@@ -31,6 +32,14 @@ export const ProfileContent = ({ companion }: ProfileContentProps) => {
     window.open(whatsappUrl, '_blank');
   };
 
+  // Demo auction data
+  const auctionData = {
+    companionId: companion.id,
+    currentPrice: 500,
+    endTime: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours from now
+    totalBids: 12
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -52,6 +61,8 @@ export const ProfileContent = ({ companion }: ProfileContentProps) => {
               hips={companion.hips || ""}
             />
           </div>
+          
+          <AuctionSection {...auctionData} />
           
           <PhotoGallery 
             photos={companion.companion_photos?.map(photo => photo.url) || []} 
