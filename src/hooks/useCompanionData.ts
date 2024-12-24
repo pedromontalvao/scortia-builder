@@ -81,7 +81,33 @@ const demoCompanion = {
     total_meetings: 156,
     repeat_clients: 45,
     satisfaction_rate: 98
-  }
+  },
+  user_id: "demo-user-1",
+  followers: 245,
+  following: 132,
+  community_posts: [
+    {
+      id: "post-1",
+      content: "Acabei de adicionar novas fotos ao meu perfil! 📸 Confiram!",
+      likes: 24,
+      comments: 8,
+      created_at: "2024-03-20T10:30:00Z"
+    },
+    {
+      id: "post-2",
+      content: "Agradeço todo o carinho que venho recebendo! ❤️ Vocês são incríveis!",
+      likes: 45,
+      comments: 12,
+      created_at: "2024-03-19T15:45:00Z"
+    },
+    {
+      id: "post-3",
+      content: "Novo ensaio fotográfico disponível para assinantes! 🔥",
+      likes: 67,
+      comments: 15,
+      created_at: "2024-03-18T20:15:00Z"
+    }
+  ]
 };
 
 export const useCompanionData = (id?: string) => {
