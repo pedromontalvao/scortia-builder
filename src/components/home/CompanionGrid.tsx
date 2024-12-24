@@ -8,6 +8,7 @@ interface Companion {
   price: number;
   services: string[];
   imageUrl: string;
+  companion_photos?: { url: string }[];
   isPremium?: boolean;
   isVerified?: boolean;
   neighborhood?: string;
@@ -34,13 +35,18 @@ export const CompanionGrid = ({ companions, isLoading = false, viewMode = "grid"
     );
   }
 
+  const processedCompanions = companions.map(companion => ({
+    ...companion,
+    imageUrl: companion.imageUrl || companion.companion_photos?.[0]?.url || '/placeholder.svg'
+  }));
+
   return (
     <div className={
       viewMode === "grid" 
         ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
         : "space-y-6"
     }>
-      {companions.map((companion) => (
+      {processedCompanions.map((companion) => (
         <CompanionCard
           key={companion.id}
           id={companion.id}

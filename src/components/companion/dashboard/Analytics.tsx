@@ -8,13 +8,24 @@ export const Analytics = () => {
   const { data: viewsData, isLoading: isLoadingViews } = useQuery({
     queryKey: ['companion-views'],
     queryFn: async () => {
+      console.log('Fetching companion views data...');
+      if (process.env.NODE_ENV === 'development') {
+        return Array.from({ length: 30 }, (_, i) => ({
+          date: new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          views: Math.floor(Math.random() * 100)
+        }));
+      }
+
       const { data, error } = await supabase
         .from('companion_views')
         .select('*')
         .order('date', { ascending: true })
         .limit(30);
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching views:', error);
+        throw error;
+      }
       return data || [];
     }
   });
@@ -22,12 +33,29 @@ export const Analytics = () => {
   const { data: stats, isLoading: isLoadingStats } = useQuery({
     queryKey: ['companion-stats'],
     queryFn: async () => {
+      console.log('Fetching companion stats...');
+      if (process.env.NODE_ENV === 'development') {
+        return {
+          views: 1234,
+          messages: 89,
+          favorites: 45,
+          appointments: 12,
+          views_change: 15,
+          messages_change: 8,
+          favorites_change: 12,
+          appointments_change: 5
+        };
+      }
+
       const { data, error } = await supabase
         .from('companion_stats')
         .select('*')
         .single();
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching stats:', error);
+        throw error;
+      }
       return data || {
         views: 0,
         messages: 0,
@@ -67,6 +95,10 @@ export const Analytics = () => {
       icon: Calendar
     }
   ];
+
+  if (isLoadingViews || isLoadingStats) {
+    return <div>Carregando dados analíticos...</div>;
+  }
 
   return (
     <div className="space-y-8">

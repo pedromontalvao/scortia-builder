@@ -15,10 +15,12 @@ export const ProfileSettings = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("basic");
   const [isPublishing, setIsPublishing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const { data: profile, isLoading, refetch } = useQuery({
     queryKey: ['companion-profile'],
     queryFn: async () => {
+      console.log('Fetching companion profile...');
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("User not authenticated");
 
@@ -28,7 +30,11 @@ export const ProfileSettings = () => {
         .eq('user_id', user.id)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching profile:', error);
+        throw error;
+      }
+      console.log('Profile data:', data);
       return data;
     }
   });
@@ -54,12 +60,19 @@ export const ProfileSettings = () => {
       'availability'
     ];
 
-    return requiredFields.every(field => profile && profile[field]);
+    return requiredFields.every(field => {
+      const hasField = profile && profile[field];
+      if (!hasField) {
+        console.log(`Missing required field: ${field}`);
+      }
+      return hasField;
+    });
   };
 
   const handleSave = async (formData: any) => {
+    console.log('Saving form data:', formData);
+    setIsSaving(true);
     try {
-      console.log('Saving form data:', formData);
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("User not authenticated");
 
@@ -76,13 +89,15 @@ export const ProfileSettings = () => {
         title: "Sucesso",
         description: "Alterações salvas com sucesso!"
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving profile:', error);
       toast({
         title: "Erro ao salvar",
-        description: "Não foi possível salvar as alterações.",
+        description: error.message || "Não foi possível salvar as alterações.",
         variant: "destructive"
       });
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -91,6 +106,15 @@ export const ProfileSettings = () => {
       setIsPublishing(true);
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("User not authenticated");
+
+      if (!profile || !isProfileComplete(profile)) {
+        toast({
+          title: "Perfil incompleto",
+          description: "Por favor, preencha todos os campos obrigatórios antes de publicar.",
+          variant: "destructive"
+        });
+        return;
+      }
 
       const { error } = await supabase
         .from('companions')
@@ -105,11 +129,11 @@ export const ProfileSettings = () => {
         title: "Perfil publicado",
         description: "Seu perfil está agora visível para todos!"
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error publishing profile:', error);
       toast({
         title: "Erro ao publicar",
-        description: "Não foi possível publicar seu perfil.",
+        description: error.message || "Não foi possível publicar seu perfil.",
         variant: "destructive"
       });
     } finally {
@@ -178,13 +202,17 @@ export const ProfileSettings = () => {
         </Tabs>
 
         <div className="mt-8">
-          <Button onClick={() => {
-            const form = document.querySelector(`form[data-tab="${activeTab}"]`);
-            if (form) {
-              form.dispatchEvent(new Event('submit'));
-            }
-          }} className="w-full">
-            Salvar Alterações
+          <Button 
+            onClick={() => {
+              const form = document.querySelector(`form[data-tab="${activeTab}"]`);
+              if (form) {
+                form.dispatchEvent(new Event('submit'));
+              }
+            }} 
+            className="w-full"
+            disabled={isSaving}
+          >
+            {isSaving ? "Salvando..." : "Salvar Alterações"}
           </Button>
         </div>
       </CardContent>
