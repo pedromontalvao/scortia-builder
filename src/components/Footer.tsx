@@ -1,6 +1,7 @@
 import { Heart } from "lucide-react";
 import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
+import { Link } from "react-router-dom";
 
 const popularCities = [
   { name: "Cuiabá", state: "MT", url: "/cidades/cuiaba" },
@@ -37,6 +38,13 @@ export const Footer = () => {
               <li><Button variant="link" className="text-gray-400 hover:text-pink-500 p-0 h-auto">Cadastre-se</Button></li>
               <li><Button variant="link" className="text-gray-400 hover:text-pink-500 p-0 h-auto">Login</Button></li>
               <li><Button variant="link" className="text-gray-400 hover:text-pink-500 p-0 h-auto">Blog</Button></li>
+              <li>
+                <Link to="/sitemap">
+                  <Button variant="link" className="text-gray-400 hover:text-pink-500 p-0 h-auto">
+                    Mapa do Site
+                  </Button>
+                </Link>
+              </li>
             </ul>
           </div>
           
@@ -63,7 +71,7 @@ export const Footer = () => {
                   className="text-gray-400 hover:text-pink-500 p-0 h-auto text-left justify-start"
                   asChild
                 >
-                  <a href={city.url}>{city.name} - {city.state}</a>
+                  <Link to={city.url}>{city.name} - {city.state}</Link>
                 </Button>
               ))}
             </div>
@@ -73,16 +81,16 @@ export const Footer = () => {
             <h4 className="text-lg font-semibold mb-4">SEO Links</h4>
             <div className="grid grid-cols-2 gap-2">
               <Button variant="link" className="text-gray-400 hover:text-pink-500 p-0 h-auto text-left justify-start" asChild>
-                <a href="/acompanhantes-cuiaba">Acompanhantes Cuiabá</a>
+                <Link to="/acompanhantes-cuiaba">Acompanhantes Cuiabá</Link>
               </Button>
               <Button variant="link" className="text-gray-400 hover:text-pink-500 p-0 h-auto text-left justify-start" asChild>
-                <a href="/garotas-de-programa-cuiaba">Garotas de Programa Cuiabá</a>
+                <Link to="/garotas-de-programa-cuiaba">Garotas de Programa Cuiabá</Link>
               </Button>
               <Button variant="link" className="text-gray-400 hover:text-pink-500 p-0 h-auto text-left justify-start" asChild>
-                <a href="/acompanhantes-varzea-grande">Acompanhantes Várzea Grande</a>
+                <Link to="/acompanhantes-varzea-grande">Acompanhantes Várzea Grande</Link>
               </Button>
               <Button variant="link" className="text-gray-400 hover:text-pink-500 p-0 h-auto text-left justify-start" asChild>
-                <a href="/garotas-de-programa-varzea-grande">Garotas de Programa Várzea Grande</a>
+                <Link to="/garotas-de-programa-varzea-grande">Garotas de Programa Várzea Grande</Link>
               </Button>
             </div>
           </div>

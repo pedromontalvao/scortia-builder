@@ -14,6 +14,7 @@ import { VerificationRequest } from "@/components/companion/dashboard/Verificati
 import { Analytics } from "@/components/companion/dashboard/Analytics";
 import { Subscription } from "@/components/companion/dashboard/Subscription";
 import VarzeaGrande from "./pages/cities/VarzeaGrande";
+import { Sitemap } from "./pages/Sitemap";
 import { CompanionRegistrationForm } from "@/components/companion/registration/CompanionRegistrationForm";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -41,6 +42,7 @@ const App = () => {
                 <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/varzea-grande" element={<VarzeaGrande />} />
+                  <Route path="/sitemap" element={<Sitemap />} />
                   <Route path="/acompanhante/:id" element={<CompanionProfile />} />
                   <Route path="/cadastro-acompanhante" element={<CompanionRegistrationForm />} />
                   <Route path="/painel" element={<CompanionDashboard />}>
