@@ -7,16 +7,22 @@ export async function saveProfile(formData: Partial<CompanionProfile>): Promise<
     
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
+      console.error('No authenticated user found');
       throw new Error("User not authenticated");
     }
+    console.log('Authenticated user:', user.id);
 
     // Check if profile exists
-    const { data: existingProfile } = await supabase
+    const { data: existingProfile, error: fetchError } = await supabase
       .from('companions')
       .select('*')
       .eq('user_id', user.id)
       .single();
 
+    if (fetchError && fetchError.code !== 'PGRST116') {
+      console.error('Error fetching existing profile:', fetchError);
+      throw fetchError;
+    }
     console.log('Existing profile:', existingProfile);
 
     const dataToSave = {
@@ -46,7 +52,7 @@ export async function saveProfile(formData: Partial<CompanionProfile>): Promise<
     }
 
     if (result.error) {
-      console.error('Error saving profile:', result.error);
+      console.error('Error in database operation:', result.error);
       throw result.error;
     }
 

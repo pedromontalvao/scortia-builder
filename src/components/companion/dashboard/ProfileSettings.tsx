@@ -20,7 +20,10 @@ export const ProfileSettings = () => {
     queryFn: async () => {
       console.log('Fetching companion profile...');
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("User not authenticated");
+      if (!user) {
+        console.error('No authenticated user found');
+        throw new Error("User not authenticated");
+      }
 
       const { data, error } = await supabase
         .from('companions')
@@ -50,7 +53,10 @@ export const ProfileSettings = () => {
     
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("User not authenticated");
+      if (!user) {
+        console.error('No authenticated user found');
+        throw new Error("User not authenticated");
+      }
 
       const dataToSave = {
         ...formData,
