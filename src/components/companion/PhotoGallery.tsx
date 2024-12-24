@@ -14,7 +14,7 @@ export const PhotoGallery = ({ photos }: PhotoGalleryProps) => {
           <h2 className="text-xl font-semibold">Galeria de Fotos</h2>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {photos.map((photo, index) => (
             <div 
               key={index} 
