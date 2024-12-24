@@ -1,5 +1,17 @@
 import { Facebook, Instagram, Twitter, Heart } from "lucide-react";
 import { Button } from "./ui/button";
+import { Separator } from "./ui/separator";
+
+const popularCities = [
+  { name: "Cuiabá", state: "MT", url: "/cidades/cuiaba" },
+  { name: "Várzea Grande", state: "MT", url: "/cidades/varzea-grande" },
+  { name: "Rondonópolis", state: "MT", url: "/cidades/rondonopolis" },
+  { name: "Sinop", state: "MT", url: "/cidades/sinop" },
+  { name: "Tangará da Serra", state: "MT", url: "/cidades/tangara-da-serra" },
+  { name: "Cáceres", state: "MT", url: "/cidades/caceres" },
+  { name: "Primavera do Leste", state: "MT", url: "/cidades/primavera-do-leste" },
+  { name: "Barra do Garças", state: "MT", url: "/cidades/barra-do-garcas" }
+];
 
 export const Footer = () => {
   return (
@@ -42,7 +54,7 @@ export const Footer = () => {
             <h4 className="text-lg font-semibold mb-4">Contato</h4>
             <div className="space-y-2 text-gray-400">
               <p>contato@vivacompanhantes.com</p>
-              <p>(11) 9999-9999</p>
+              <p>(65) 9999-9999</p>
               <p>Seg - Sex, 9h às 18h</p>
               <div className="flex gap-4 mt-4">
                 <Button variant="ghost" size="icon" className="hover:text-pink-500 p-2">
@@ -58,6 +70,45 @@ export const Footer = () => {
             </div>
           </div>
         </div>
+
+        <Separator className="my-8 bg-gray-800" />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div>
+            <h4 className="text-lg font-semibold mb-4">Principais Cidades</h4>
+            <div className="grid grid-cols-2 gap-2">
+              {popularCities.map((city) => (
+                <Button
+                  key={city.url}
+                  variant="link"
+                  className="text-gray-400 hover:text-pink-500 p-0 h-auto text-left justify-start"
+                  asChild
+                >
+                  <a href={city.url}>{city.name} - {city.state}</a>
+                </Button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <h4 className="text-lg font-semibold mb-4">SEO Links</h4>
+            <div className="grid grid-cols-2 gap-2">
+              <Button variant="link" className="text-gray-400 hover:text-pink-500 p-0 h-auto text-left justify-start" asChild>
+                <a href="/acompanhantes-cuiaba">Acompanhantes Cuiabá</a>
+              </Button>
+              <Button variant="link" className="text-gray-400 hover:text-pink-500 p-0 h-auto text-left justify-start" asChild>
+                <a href="/garotas-de-programa-cuiaba">Garotas de Programa Cuiabá</a>
+              </Button>
+              <Button variant="link" className="text-gray-400 hover:text-pink-500 p-0 h-auto text-left justify-start" asChild>
+                <a href="/acompanhantes-varzea-grande">Acompanhantes Várzea Grande</a>
+              </Button>
+              <Button variant="link" className="text-gray-400 hover:text-pink-500 p-0 h-auto text-left justify-start" asChild>
+                <a href="/garotas-de-programa-varzea-grande">Garotas de Programa Várzea Grande</a>
+              </Button>
+            </div>
+          </div>
+        </div>
+
         <div className="mt-8 pt-8 border-t border-gray-800 text-center text-gray-400">
           <p>&copy; 2024 VivAcompanhantes. Todos os direitos reservados.</p>
         </div>

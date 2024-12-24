@@ -72,9 +72,19 @@ export const ProfileSettings = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("User not authenticated");
 
+      // Merge existing profile data with new form data
+      const updatedData = {
+        ...profile,
+        ...formData,
+        updated_at: new Date().toISOString()
+      };
+
       const { error } = await supabase
         .from('companions')
-        .update(formData)
+        .upsert({
+          user_id: user.id,
+          ...updatedData
+        })
         .eq('user_id', user.id);
 
       if (error) throw error;
