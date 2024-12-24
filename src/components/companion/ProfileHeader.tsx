@@ -76,29 +76,31 @@ export const ProfileHeader = ({
 
   return (
     <div className="relative min-h-[60vh] md:min-h-[70vh] bg-gradient-to-r from-purple-900 to-pink-900">
-      <div className="absolute inset-0 bg-black/40">
+      <div className="absolute inset-0">
         <img 
           src={imageUrl} 
           alt={name} 
-          className="w-full h-full object-cover mix-blend-overlay animate-fade-in" 
+          className="w-full h-full object-cover opacity-50" 
         />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/50 to-black/70" />
+        
         <div className="container mx-auto px-4 h-full relative">
           <div className="flex flex-col h-full">
             <div className="flex items-start justify-between pt-6">
               <Button 
                 variant="ghost" 
-                className="text-white hover:bg-white/20 backdrop-blur-sm animate-fade-in animation-delay-200" 
+                className="text-white hover:bg-white/20 backdrop-blur-sm animate-fade-in" 
                 onClick={() => navigate(-1)}
               >
                 Voltar
               </Button>
-              <div className="flex gap-2 animate-fade-in animation-delay-300">
+              <div className="flex gap-2 animate-fade-in">
                 <Button 
                   variant="ghost" 
                   className={`text-white hover:bg-white/20 backdrop-blur-sm ${isLiked ? 'text-pink-500' : ''}`}
                   onClick={() => setIsLiked(!isLiked)}
                 >
-                  <Heart className={`h-4 w-4 ${isLiked ? 'fill-current animate-scale-in' : ''}`} />
+                  <Heart className={`h-4 w-4 ${isLiked ? 'fill-current' : ''}`} />
                 </Button>
                 <Button 
                   variant="ghost" 
@@ -110,55 +112,55 @@ export const ProfileHeader = ({
               </div>
             </div>
             
-            <div className="mt-auto pb-6 text-white animate-fade-in animation-delay-200">
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
-                <div className="space-y-2">
+            <div className="mt-auto pb-6 text-white">
+              <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-4 mb-4">
+                <div className="space-y-4 max-w-2xl">
                   <div className="flex flex-wrap items-center gap-2">
                     <h1 className="text-3xl md:text-4xl font-bold">{name}</h1>
                     <div className="flex flex-wrap gap-2">
                       {isPremium && (
-                        <Badge className="bg-yellow-500/90 backdrop-blur-sm animate-scale-in">
+                        <Badge className="bg-yellow-500/90 backdrop-blur-sm">
                           <Crown className="w-4 h-4 mr-1" />
                           Premium
                         </Badge>
                       )}
                       {isVerified && (
-                        <Badge className="bg-green-500/90 backdrop-blur-sm animate-scale-in">
+                        <Badge className="bg-green-500/90 backdrop-blur-sm">
                           <Shield className="w-4 h-4 mr-1" />
                           Verificada
                         </Badge>
                       )}
                     </div>
                   </div>
-                  <p className="text-gray-200 max-w-2xl text-sm md:text-base">{description}</p>
+                  <p className="text-gray-200 text-sm md:text-base">{description}</p>
+                  
+                  <div className="flex flex-wrap items-center gap-4 text-gray-200 text-sm md:text-base">
+                    <div className="flex items-center gap-1">
+                      <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                      {rating} ({reviews} avaliações)
+                    </div>
+                    <div>{experience}</div>
+                    <div>{location}</div>
+                  </div>
+
+                  <div className="flex flex-wrap gap-4 text-sm text-gray-300">
+                    <div className="flex items-center gap-1">
+                      <MessageSquare className="w-4 h-4" />
+                      {messages} mensagens
+                    </div>
+                    <div>{views} visualizações</div>
+                    <div>{likes} curtidas</div>
+                  </div>
                 </div>
                 
                 <Button 
                   onClick={handleWhatsAppClick}
                   size="lg"
-                  className="bg-green-500 hover:bg-green-600 text-white animate-scale-in animation-delay-500 hover:scale-105 transition-transform"
+                  className="bg-green-500 hover:bg-green-600 text-white w-full md:w-auto animate-fade-in hover:scale-105 transition-all duration-300 shadow-lg"
                 >
                   <MessageSquare className="w-5 h-5 mr-2" />
                   Chamar no WhatsApp
                 </Button>
-              </div>
-              
-              <div className="flex flex-wrap items-center gap-4 text-gray-200 text-sm md:text-base mb-4">
-                <div className="flex items-center gap-1">
-                  <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                  {rating} ({reviews} avaliações)
-                </div>
-                <div>{experience}</div>
-                <div>{location}</div>
-              </div>
-
-              <div className="flex flex-wrap gap-4 text-sm text-gray-300">
-                <div className="flex items-center gap-1">
-                  <MessageSquare className="w-4 h-4" />
-                  {messages} mensagens
-                </div>
-                <div>{views} visualizações</div>
-                <div>{likes} curtidas</div>
               </div>
             </div>
           </div>

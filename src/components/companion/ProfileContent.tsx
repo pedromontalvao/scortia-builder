@@ -33,8 +33,8 @@ export const ProfileContent = ({ companion }: ProfileContentProps) => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-8 animate-fade-in">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="lg:col-span-8 space-y-8">
           <PersonalInfo
             age={companion.age || ""}
             height={companion.height || ""}
@@ -80,7 +80,7 @@ export const ProfileContent = ({ companion }: ProfileContentProps) => {
           )}
         </div>
 
-        <div className="space-y-8 animate-fade-in animation-delay-300">
+        <div className="lg:col-span-4 space-y-8">
           <ContactInfo
             whatsapp={companion.whatsapp || ""}
             email={companion.email || ""}
