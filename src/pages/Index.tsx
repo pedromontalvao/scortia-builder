@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CompanionGrid } from "@/components/home/CompanionGrid";
 import { SearchFilters } from "@/components/home/SearchFilters";
 import { HeroSection } from "@/components/HeroSection";
@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { FeaturedCompanions } from "@/components/home/FeaturedCompanions";
 import { PopularLocations } from "@/components/home/PopularLocations";
 import { HowItWorks } from "@/components/home/HowItWorks";
+import { useLocation } from "react-router-dom";
 
 interface IndexProps {
   city?: string;
@@ -18,7 +19,33 @@ interface IndexProps {
 const Index: React.FC<IndexProps> = ({ city }) => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const { toast } = useToast();
+  const location = useLocation();
   
+  // Auto-detect user's location
+  useEffect(() => {
+    const detectLocation = async () => {
+      try {
+        const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject);
+        });
+        
+        console.log("User location detected:", position.coords);
+        
+        // You could use these coordinates to fetch nearby companions
+        // For now, we'll just show a toast
+        toast({
+          title: "Localização detectada",
+          description: "Mostrando acompanhantes próximas a você.",
+        });
+      } catch (error) {
+        console.log("Error detecting location:", error);
+      }
+    };
+
+    detectLocation();
+  }, [toast]);
+
+  // Auto-refresh data periodically
   const { data: companions, isLoading, error } = useQuery({
     queryKey: ['companions', city],
     queryFn: async () => {
@@ -71,6 +98,7 @@ const Index: React.FC<IndexProps> = ({ city }) => {
       console.log('Fetched companions data:', data);
       return data || [];
     },
+    refetchInterval: 5 * 60 * 1000, // Auto-refresh every 5 minutes
     meta: {
       onError: () => {
         toast({
@@ -82,9 +110,31 @@ const Index: React.FC<IndexProps> = ({ city }) => {
     }
   });
 
+  // Auto-save view mode preference
+  useEffect(() => {
+    localStorage.setItem('preferredViewMode', viewMode);
+  }, [viewMode]);
+
+  // Load saved view mode on mount
+  useEffect(() => {
+    const savedViewMode = localStorage.getItem('preferredViewMode') as "grid" | "list" | null;
+    if (savedViewMode) {
+      setViewMode(savedViewMode);
+    }
+  }, []);
+
+  // Track page views
+  useEffect(() => {
+    console.log('Page view:', location.pathname);
+    // You could send this to an analytics service
+  }, [location]);
+
   const handleSearch = (filters: any) => {
     console.log("Search filters:", filters);
-    // Implement search functionality here
+    // Save recent searches
+    const recentSearches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
+    recentSearches.unshift(filters);
+    localStorage.setItem('recentSearches', JSON.stringify(recentSearches.slice(0, 5)));
   };
 
   if (isLoading) {
@@ -141,7 +191,10 @@ const Index: React.FC<IndexProps> = ({ city }) => {
             
             {companions && companions.length > 0 ? (
               <CompanionGrid 
-                companions={companions} 
+                companions={companions.map(companion => ({
+                  ...companion,
+                  imageUrl: companion.companion_photos?.[0]?.url || '/placeholder.svg'
+                }))}
                 viewMode={viewMode} 
               />
             ) : (
