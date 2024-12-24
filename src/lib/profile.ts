@@ -20,9 +20,8 @@ export async function saveProfile(formData: Partial<CompanionProfile>): Promise<
     console.log('Existing profile:', existingProfile);
 
     const dataToSave = {
-      user_id: user.id,
-      ...(existingProfile || {}),
       ...formData,
+      user_id: user.id,
       updated_at: new Date().toISOString()
     };
 
@@ -41,7 +40,7 @@ export async function saveProfile(formData: Partial<CompanionProfile>): Promise<
       console.log('Creating new profile...');
       result = await supabase
         .from('companions')
-        .insert(dataToSave)
+        .insert([dataToSave])
         .select()
         .single();
     }

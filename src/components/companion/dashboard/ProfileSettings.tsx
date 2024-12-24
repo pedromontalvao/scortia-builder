@@ -40,13 +40,33 @@ export const ProfileSettings = () => {
 
   const handleSave = async (formData: Partial<CompanionProfile>) => {
     console.log('Starting save operation with form data:', formData);
+    
+    if (isSaving) {
+      console.log('Already saving, skipping...');
+      return;
+    }
+
     setIsSaving(true);
     
     try {
-      const { data, error } = await saveProfile(formData);
-      
-      if (error) throw error;
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("User not authenticated");
 
+      const dataToSave = {
+        ...formData,
+        user_id: user.id,
+        updated_at: new Date().toISOString()
+      };
+
+      console.log('Saving profile data:', dataToSave);
+      const { data, error } = await saveProfile(dataToSave);
+      
+      if (error) {
+        console.error('Error in save operation:', error);
+        throw error;
+      }
+
+      console.log('Profile saved successfully:', data);
       await queryClient.invalidateQueries({ queryKey: ['companion-profile'] });
 
       toast({
