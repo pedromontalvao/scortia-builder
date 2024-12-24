@@ -2,19 +2,62 @@ import { Heart } from "lucide-react";
 import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 
-const popularCities = [
-  { name: "Cuiabá", state: "MT", url: "/cidades/cuiaba" },
-  { name: "Várzea Grande", state: "MT", url: "/cidades/varzea-grande" },
-  { name: "Rondonópolis", state: "MT", url: "/cidades/rondonopolis" },
-  { name: "Sinop", state: "MT", url: "/cidades/sinop" },
-  { name: "Tangará da Serra", state: "MT", url: "/cidades/tangara-da-serra" },
-  { name: "Cáceres", state: "MT", url: "/cidades/caceres" },
-  { name: "Primavera do Leste", state: "MT", url: "/cidades/primavera-do-leste" },
-  { name: "Barra do Garças", state: "MT", url: "/cidades/barra-do-garcas" }
-];
+interface City {
+  name: string;
+  state: string;
+  url: string;
+}
 
 export const Footer = () => {
+  const [userCity, setUserCity] = useState<string | null>(null);
+  const [popularCities, setPopularCities] = useState<City[]>([
+    { name: "Cuiabá", state: "MT", url: "/cidades/cuiaba" },
+    { name: "Várzea Grande", state: "MT", url: "/cidades/varzea-grande" },
+    { name: "Rondonópolis", state: "MT", url: "/cidades/rondonopolis" },
+    { name: "Sinop", state: "MT", url: "/cidades/sinop" },
+    { name: "Tangará da Serra", state: "MT", url: "/cidades/tangara-da-serra" },
+    { name: "Cáceres", state: "MT", url: "/cidades/caceres" },
+    { name: "Primavera do Leste", state: "MT", url: "/cidades/primavera-do-leste" },
+    { name: "Barra do Garças", state: "MT", url: "/cidades/barra-do-garcas" }
+  ]);
+
+  useEffect(() => {
+    const detectUserLocation = async () => {
+      try {
+        console.log('Attempting to detect user location...');
+        const response = await fetch('https://ipapi.co/json/');
+        const data = await response.json();
+        console.log('User location detected:', data);
+        
+        if (data.city) {
+          setUserCity(data.city);
+          
+          // Reorder cities based on proximity to user's location
+          const reorderedCities = [...popularCities].sort((a, b) => {
+            // If one of the cities matches user's city, prioritize it
+            if (a.name === data.city) return -1;
+            if (b.name === data.city) return 1;
+            
+            // Prioritize Rondonópolis and major cities
+            if (a.name === "Rondonópolis") return -1;
+            if (b.name === "Rondonópolis") return 1;
+            
+            // Keep original order for other cities
+            return 0;
+          });
+          
+          setPopularCities(reorderedCities);
+        }
+      } catch (error) {
+        console.error('Error detecting user location:', error);
+      }
+    };
+
+    detectUserLocation();
+  }, []);
+
   return (
     <footer className="bg-[#15171E] text-white">
       <div className="container mx-auto px-4 py-12">
@@ -69,13 +112,17 @@ export const Footer = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
-            <h4 className="text-lg font-semibold mb-4">Principais Cidades</h4>
+            <h4 className="text-lg font-semibold mb-4">
+              {userCity ? `Principais Cidades próximas a ${userCity}` : 'Principais Cidades'}
+            </h4>
             <div className="grid grid-cols-2 gap-2">
               {popularCities.map((city) => (
                 <Button
                   key={city.url}
                   variant="link"
-                  className="text-gray-400 hover:text-pink-500 p-0 h-auto text-left justify-start"
+                  className={`text-gray-400 hover:text-pink-500 p-0 h-auto text-left justify-start ${
+                    city.name === userCity ? 'text-pink-500 font-semibold' : ''
+                  }`}
                   asChild
                 >
                   <Link to={city.url}>{city.name} - {city.state}</Link>

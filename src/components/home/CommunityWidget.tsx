@@ -2,8 +2,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { TrendingUp, MessageCircle, Users, ArrowRight } from "lucide-react";
+import { TrendingUp, MessageCircle, Users, ArrowRight, ThumbsUp, Heart } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export const CommunityWidget = () => {
   const navigate = useNavigate();
@@ -19,14 +22,20 @@ export const CommunityWidget = () => {
             title: "Dicas de segurança essenciais",
             engagement: 156,
             author: "Maria Silva",
-            avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Maria"
+            avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Maria",
+            likes: 89,
+            comments: 45,
+            tags: ["Segurança", "Dicas"]
           },
           {
             id: 2,
             title: "Melhores regiões em SP",
             engagement: 132,
             author: "Ana Santos",
-            avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Ana"
+            avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Ana",
+            likes: 67,
+            comments: 38,
+            tags: ["São Paulo", "Localização"]
           }
         ];
       }
@@ -62,39 +71,55 @@ export const CommunityWidget = () => {
           </Button>
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        {trendingTopics?.map((topic) => (
-          <Card 
-            key={topic.id}
-            className="bg-white/80 hover:bg-white transition-colors cursor-pointer group animate-fade-in"
-            onClick={() => navigate('/comunidade')}
-          >
-            <CardContent className="p-4">
-              <div className="flex items-start gap-3">
-                <img
-                  src={topic.avatar}
-                  alt={topic.author}
-                  className="w-10 h-10 rounded-full"
-                />
-                <div className="flex-1">
-                  <h3 className="font-medium text-gray-900 group-hover:text-purple-600 transition-colors">
-                    {topic.title}
-                  </h3>
-                  <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
-                    <span className="flex items-center gap-1">
-                      <Users className="w-4 h-4" />
-                      {topic.author}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <MessageCircle className="w-4 h-4" />
-                      {topic.engagement} interações
-                    </span>
+      <CardContent>
+        <ScrollArea className="h-[300px] pr-4">
+          {trendingTopics?.map((topic) => (
+            <Card 
+              key={topic.id}
+              className="bg-white/80 hover:bg-white transition-colors cursor-pointer group animate-fade-in mb-4"
+              onClick={() => navigate('/comunidade')}
+            >
+              <CardContent className="p-4">
+                <div className="flex items-start gap-3">
+                  <Avatar className="w-10 h-10">
+                    <AvatarImage src={topic.avatar} alt={topic.author} />
+                    <AvatarFallback>{topic.author[0]}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <h3 className="font-medium text-gray-900 group-hover:text-purple-600 transition-colors line-clamp-2">
+                      {topic.title}
+                    </h3>
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {topic.tags?.map((tag) => (
+                        <Badge 
+                          key={tag} 
+                          variant="secondary"
+                          className="bg-purple-100 text-purple-700 text-xs"
+                        >
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                    <div className="flex items-center gap-4 mt-3 text-sm text-gray-500">
+                      <span className="flex items-center gap-1">
+                        <Users className="w-4 h-4" />
+                        {topic.author}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Heart className="w-4 h-4 text-pink-500" />
+                        {topic.likes}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <MessageCircle className="w-4 h-4" />
+                        {topic.comments}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+              </CardContent>
+            </Card>
+          ))}
+        </ScrollArea>
       </CardContent>
     </Card>
   );
