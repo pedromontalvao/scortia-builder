@@ -24,14 +24,14 @@ export const HeroSection = () => {
       {/* Background Image Layer */}
       <div className="absolute inset-0">
         <img 
-          src="https://images.unsplash.com/photo-1551038247-3d9af20df552"
+          src="https://images.unsplash.com/photo-1621784563330-caee0b138a00?q=80&w=2070&auto=format&fit=crop"
           alt="Background" 
           className="w-full h-full object-cover object-center"
         />
       </div>
 
       {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-pink-500/90 via-purple-600/90 to-indigo-700/90" />
+      <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-purple-900/70 to-pink-900/80" />
       
       {/* Pattern Overlay */}
       <div 
@@ -46,8 +46,8 @@ export const HeroSection = () => {
             loaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
           }`}
         >
-          <h1 className="text-5xl md:text-7xl font-bold animate-fade-in bg-clip-text">
-            <span className="bg-gradient-to-r from-white via-pink-100 to-purple-200 text-transparent">
+          <h1 className="text-5xl md:text-7xl font-bold animate-fade-in">
+            <span className="bg-gradient-to-r from-white via-pink-200 to-purple-200 text-transparent bg-clip-text">
               Encontre a Companhia Perfeita
             </span>
           </h1>
@@ -78,7 +78,7 @@ export const HeroSection = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-white">
           <div 
-            className={`flex items-center gap-4 bg-white/10 p-6 rounded-lg backdrop-blur-sm hover:bg-white/20 transition-all duration-300 hover:scale-105 hover:shadow-xl border border-white/20 ${
+            className={`flex items-center gap-4 bg-black/30 backdrop-blur-sm p-6 rounded-lg hover:bg-black/40 transition-all duration-300 hover:scale-105 hover:shadow-xl border border-white/10 ${
               loaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
             }`}
             style={{ transitionDelay: '200ms' }}
@@ -91,7 +91,7 @@ export const HeroSection = () => {
           </div>
           
           <div 
-            className={`flex items-center gap-4 bg-white/10 p-6 rounded-lg backdrop-blur-sm hover:bg-white/20 transition-all duration-300 hover:scale-105 hover:shadow-xl border border-white/20 ${
+            className={`flex items-center gap-4 bg-black/30 backdrop-blur-sm p-6 rounded-lg hover:bg-black/40 transition-all duration-300 hover:scale-105 hover:shadow-xl border border-white/10 ${
               loaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
             }`}
             style={{ transitionDelay: '400ms' }}
@@ -104,7 +104,7 @@ export const HeroSection = () => {
           </div>
           
           <div 
-            className={`flex items-center gap-4 bg-white/10 p-6 rounded-lg backdrop-blur-sm hover:bg-white/20 transition-all duration-300 hover:scale-105 hover:shadow-xl border border-white/20 ${
+            className={`flex items-center gap-4 bg-black/30 backdrop-blur-sm p-6 rounded-lg hover:bg-black/40 transition-all duration-300 hover:scale-105 hover:shadow-xl border border-white/10 ${
               loaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
             }`}
             style={{ transitionDelay: '600ms' }}
