@@ -4,7 +4,7 @@ import { supabase } from "@/lib/supabase";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Plus, TrendingUp } from "lucide-react";
+import { Plus, TrendingUp, Users, MessageCircle } from "lucide-react";
 import { CommunityStats } from "@/components/community/CommunityStats";
 import { TopicList } from "@/components/community/TopicList";
 import { CategoryList } from "@/components/community/CategoryList";
@@ -12,9 +12,11 @@ import { CommunityReviews } from "@/components/community/CommunityReviews";
 import { TrendingTopics } from "@/components/community/TrendingTopics";
 import { CreatePostDialog } from "@/components/community/CreatePostDialog";
 import { useToast } from "@/hooks/use-toast";
+import { CommunityRules } from "@/components/community/CommunityRules";
+import { CommunityDiscussions } from "@/components/community/CommunityDiscussions";
 
 export const Community = () => {
-  const [activeTab, setActiveTab] = useState("forum");
+  const [activeTab, setActiveTab] = useState("feed");
   const [isCreatePostOpen, setIsCreatePostOpen] = useState(false);
   const { toast } = useToast();
   const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
@@ -80,13 +82,18 @@ export const Community = () => {
             </Card>
 
             <Tabs defaultValue={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="forum">Feed</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="feed">Feed</TabsTrigger>
+                <TabsTrigger value="discussions">Discussões</TabsTrigger>
                 <TabsTrigger value="reviews">Avaliações</TabsTrigger>
               </TabsList>
 
-              <TabsContent value="forum" className="mt-6">
+              <TabsContent value="feed" className="mt-6">
                 <TopicList />
+              </TabsContent>
+
+              <TabsContent value="discussions" className="mt-6">
+                <CommunityDiscussions />
               </TabsContent>
 
               <TabsContent value="reviews" className="mt-6">
@@ -96,22 +103,8 @@ export const Community = () => {
           </div>
 
           <div className="space-y-8">
+            <CommunityRules />
             <TrendingTopics />
-            
-            <Card className="bg-white/50">
-              <CardContent className="p-6">
-                <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-purple-500" />
-                  Sugestões para Seguir
-                </h3>
-                {/* Placeholder for suggested users/topics */}
-                <div className="space-y-4">
-                  <p className="text-sm text-gray-500">
-                    Em breve você poderá seguir outros membros da comunidade!
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
           </div>
         </div>
       </div>

@@ -15,7 +15,9 @@ export const TopicList = () => {
             content: "Compartilhem suas experiências e dicas de segurança para encontros. É importante mantermos nossa comunidade segura!",
             author: {
               name: "Maria Silva",
-              avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Maria"
+              avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Maria",
+              isVerified: true,
+              hasSubscriptionContent: true
             },
             category: "Segurança",
             likes: 42,
@@ -27,18 +29,20 @@ export const TopicList = () => {
           },
           {
             id: 2,
-            title: "Melhores regiões em São Paulo",
-            content: "Quais são as regiões mais seguras e com melhor infraestrutura em São Paulo? Compartilhem suas experiências!",
+            title: "Conteúdo Exclusivo",
+            content: "Fotos e vídeos exclusivos para assinantes.",
             author: {
-              name: "João Santos",
-              avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Joao"
+              name: "Julia Santos",
+              avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Julia",
+              isVerified: true,
+              hasSubscriptionContent: true
             },
-            category: "Localização",
+            category: "Conteúdo Premium",
             likes: 38,
             replies: 23,
             created_at: "2024-03-19T15:45:00Z",
             is_pinned: false,
-            images: ["https://picsum.photos/seed/sp1/800/600", "https://picsum.photos/seed/sp2/800/600"],
+            isSubscriptionContent: true,
             isLiked: true
           }
         ];
