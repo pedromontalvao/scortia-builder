@@ -1,11 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
+import { useToast } from "@/hooks/use-toast";
 
-// Demo data for development
+// Enhanced demo data
 const demoCompanion = {
-  id: "comp-001",
+  id: "demo-1",
   name: "Ana Silva",
-  description: "Olá! Sou a Ana, uma acompanhante profissional com experiência em proporcionar momentos únicos e especiais.",
+  description: "Olá! Sou a Ana, uma acompanhante profissional com experiência em proporcionar momentos únicos e especiais. Atendo com muito carinho e discrição.",
   neighborhood: "Centro",
   city: "Várzea Grande",
   state: "MT",
@@ -31,11 +32,12 @@ const demoCompanion = {
   email: "ana.silva@example.com",
   weekday_hours: "9h às 22h",
   weekend_hours: "10h às 20h",
-  service_areas: ["Várzea Grande", "Cuiabá"],
+  service_areas: ["Várzea Grande", "Cuiabá", "Santo Antônio do Leverger"],
   companion_photos: [
     { url: "/demo/ana-1.jpg", is_primary: true },
     { url: "/demo/ana-2.jpg", is_primary: false },
-    { url: "/demo/ana-3.jpg", is_primary: false }
+    { url: "/demo/ana-3.jpg", is_primary: false },
+    { url: "/demo/ana-4.jpg", is_primary: false }
   ],
   companion_services: [
     {
@@ -49,13 +51,42 @@ const demoCompanion = {
       duration: "12 horas",
       price: 1500,
       description: "Acompanhamento completo durante toda a noite"
+    },
+    {
+      title: "Jantar ou Eventos",
+      duration: "4 horas",
+      price: 800,
+      description: "Acompanhamento em jantares, festas ou eventos sociais"
     }
   ],
   presentation_audio: "/demo/presentation.mp3",
-  voice_message: "/demo/voice-message.mp3"
+  voice_message: "/demo/voice-message.mp3",
+  reviews_data: [
+    {
+      id: 1,
+      user: "Cliente Anônimo",
+      rating: 5,
+      comment: "Excelente companhia, muito atenciosa e carinhosa.",
+      date: "2024-03-15"
+    },
+    {
+      id: 2,
+      user: "Cliente Verificado",
+      rating: 4,
+      comment: "Ótima experiência, recomendo!",
+      date: "2024-03-10"
+    }
+  ],
+  stats: {
+    total_meetings: 156,
+    repeat_clients: 45,
+    satisfaction_rate: 98
+  }
 };
 
 export const useCompanionData = (id?: string) => {
+  const { toast } = useToast();
+
   return useQuery({
     queryKey: ['companion', id],
     queryFn: async () => {
@@ -66,8 +97,9 @@ export const useCompanionData = (id?: string) => {
         throw new Error('No companion ID provided');
       }
 
-      if (id === 'comp-001') {
-        console.log('Returning demo data for comp-001');
+      // Return demo data for development
+      if (id === 'demo-1') {
+        console.log('Returning demo data for demo-1');
         return demoCompanion;
       }
 
@@ -77,18 +109,30 @@ export const useCompanionData = (id?: string) => {
           .select(`
             *,
             companion_photos(url, is_primary),
-            companion_services(title, duration, price, description)
+            companion_services(title, duration, price, description),
+            reviews_data:reviews(id, user, rating, comment, date),
+            stats(total_meetings, repeat_clients, satisfaction_rate)
           `)
           .eq('id', id)
           .single();
 
         if (error) {
           console.error('Supabase error fetching companion:', error);
+          toast({
+            title: "Erro ao carregar dados",
+            description: "Não foi possível carregar as informações da acompanhante.",
+            variant: "destructive"
+          });
           throw error;
         }
 
         if (!data) {
           console.error('No companion found with ID:', id);
+          toast({
+            title: "Perfil não encontrado",
+            description: "O perfil solicitado não foi encontrado.",
+            variant: "destructive"
+          });
           throw new Error('Companion not found');
         }
         

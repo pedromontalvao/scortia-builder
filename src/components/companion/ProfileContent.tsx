@@ -5,6 +5,8 @@ import { ServicesAndPrices } from "./ServicesAndPrices";
 import { ContactInfo } from "./ContactInfo";
 import { AudioSection } from "./AudioSection";
 import { Measurements } from "./Measurements";
+import { Reviews } from "./Reviews";
+import { Statistics } from "./Statistics";
 import { useToast } from "@/hooks/use-toast";
 
 interface ProfileContentProps {
@@ -62,6 +64,18 @@ export const ProfileContent = ({ companion }: ProfileContentProps) => {
             <AudioSection
               presentationAudio={companion.presentation_audio || ""}
               voiceMessageAudio={companion.voice_message || ""}
+            />
+          )}
+
+          {companion.reviews_data && companion.reviews_data.length > 0 && (
+            <Reviews reviews={companion.reviews_data} />
+          )}
+
+          {companion.stats && (
+            <Statistics
+              totalMeetings={companion.stats.total_meetings}
+              repeatClients={companion.stats.repeat_clients}
+              satisfactionRate={companion.stats.satisfaction_rate}
             />
           )}
         </div>
