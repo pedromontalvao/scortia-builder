@@ -1,4 +1,4 @@
-import { WhatsappLogo } from "lucide-react";
+import { MessageSquare } from "lucide-react";
 
 interface FloatingWhatsAppProps {
   phoneNumber: string;
@@ -17,7 +17,7 @@ export const FloatingWhatsApp = ({ phoneNumber, name }: FloatingWhatsAppProps) =
       onClick={handleClick}
       className="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg transition-transform hover:scale-110 z-50 flex items-center gap-2 group"
     >
-      <WhatsappLogo className="w-6 h-6" />
+      <MessageSquare className="w-6 h-6" />
       <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 ease-in-out whitespace-nowrap">
         Chamar no WhatsApp
       </span>
