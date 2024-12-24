@@ -2,9 +2,8 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import InputMask from "react-input-mask";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/lib/supabase";
 import { fetchAddressByCep } from "@/lib/cep";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
@@ -27,10 +26,11 @@ export const BasicInfoForm = ({ initialData, onSave }: BasicInfoFormProps) => {
   const { toast } = useToast();
 
   const handleCepBlur = async () => {
-    if (cep.length === 8) {
+    const cleanCep = cep.replace(/\D/g, '');
+    if (cleanCep.length === 8) {
       setIsLoadingCep(true);
       try {
-        const address = await fetchAddressByCep(cep);
+        const address = await fetchAddressByCep(cleanCep);
         setState(address.uf);
         setCity(address.localidade);
         setNeighborhood(address.bairro);
@@ -67,7 +67,7 @@ export const BasicInfoForm = ({ initialData, onSave }: BasicInfoFormProps) => {
   };
 
   return (
-    <form className="space-y-6">
+    <form className="space-y-6" data-tab="basic">
       <div>
         <Label htmlFor="name">Nome Artístico</Label>
         <Input
@@ -90,14 +90,20 @@ export const BasicInfoForm = ({ initialData, onSave }: BasicInfoFormProps) => {
       <div>
         <Label htmlFor="cep">CEP</Label>
         <div className="flex gap-2">
-          <Input
-            id="cep"
+          <InputMask
+            mask="99999-999"
             value={cep}
-            onChange={(e) => setCep(e.target.value.replace(/\D/g, ''))}
+            onChange={(e) => setCep(e.target.value)}
             onBlur={handleCepBlur}
-            maxLength={8}
-            placeholder="00000000"
-          />
+          >
+            {(inputProps: any) => (
+              <Input
+                {...inputProps}
+                id="cep"
+                placeholder="00000-000"
+              />
+            )}
+          </InputMask>
           {isLoadingCep && (
             <Loader2 className="h-4 w-4 animate-spin" />
           )}
@@ -120,7 +126,6 @@ export const BasicInfoForm = ({ initialData, onSave }: BasicInfoFormProps) => {
             id="state"
             value={state}
             onChange={(e) => setState(e.target.value)}
-            readOnly
           />
         </div>
 
@@ -130,7 +135,6 @@ export const BasicInfoForm = ({ initialData, onSave }: BasicInfoFormProps) => {
             id="city"
             value={city}
             onChange={(e) => setCity(e.target.value)}
-            readOnly
           />
         </div>
 
@@ -140,18 +144,25 @@ export const BasicInfoForm = ({ initialData, onSave }: BasicInfoFormProps) => {
             id="neighborhood"
             value={neighborhood}
             onChange={(e) => setNeighborhood(e.target.value)}
-            readOnly
           />
         </div>
       </div>
 
       <div>
         <Label htmlFor="whatsapp">WhatsApp</Label>
-        <Input
-          id="whatsapp"
+        <InputMask
+          mask="(99) 99999-9999"
           value={whatsapp}
           onChange={(e) => setWhatsapp(e.target.value)}
-        />
+        >
+          {(inputProps: any) => (
+            <Input
+              {...inputProps}
+              id="whatsapp"
+              placeholder="(00) 00000-0000"
+            />
+          )}
+        </InputMask>
       </div>
     </form>
   );

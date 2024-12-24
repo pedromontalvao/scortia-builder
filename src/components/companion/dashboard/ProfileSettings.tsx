@@ -9,12 +9,14 @@ import { CharacteristicsForm } from "./settings/CharacteristicsForm";
 import { AvailabilityForm } from "./settings/AvailabilityForm";
 import { supabase } from "@/lib/supabase";
 import { useQuery } from "@tanstack/react-query";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 export const ProfileSettings = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("basic");
+  const [isPublishing, setIsPublishing] = useState(false);
 
-  const { data: profile, isLoading } = useQuery({
+  const { data: profile, isLoading, refetch } = useQuery({
     queryKey: ['companion-profile'],
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -31,8 +33,33 @@ export const ProfileSettings = () => {
     }
   });
 
+  const isProfileComplete = (profile: any) => {
+    const requiredFields = [
+      'name',
+      'description',
+      'cep',
+      'street',
+      'state',
+      'city',
+      'neighborhood',
+      'whatsapp',
+      'services',
+      'ethnicity',
+      'body_type',
+      'hair_color',
+      'breast_type',
+      'height',
+      'weight',
+      'measurements',
+      'availability'
+    ];
+
+    return requiredFields.every(field => profile && profile[field]);
+  };
+
   const handleSave = async (formData: any) => {
     try {
+      console.log('Saving form data:', formData);
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("User not authenticated");
 
@@ -42,6 +69,8 @@ export const ProfileSettings = () => {
         .eq('user_id', user.id);
 
       if (error) throw error;
+
+      await refetch();
 
       toast({
         title: "Sucesso",
@@ -57,14 +86,70 @@ export const ProfileSettings = () => {
     }
   };
 
+  const handlePublish = async () => {
+    try {
+      setIsPublishing(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("User not authenticated");
+
+      const { error } = await supabase
+        .from('companions')
+        .update({ is_published: true })
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      await refetch();
+
+      toast({
+        title: "Perfil publicado",
+        description: "Seu perfil está agora visível para todos!"
+      });
+    } catch (error) {
+      console.error('Error publishing profile:', error);
+      toast({
+        title: "Erro ao publicar",
+        description: "Não foi possível publicar seu perfil.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsPublishing(false);
+    }
+  };
+
   if (isLoading) {
     return <div>Carregando...</div>;
   }
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Configurações do Perfil</CardTitle>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button 
+              variant="default" 
+              disabled={!profile || !isProfileComplete(profile) || profile.is_published}
+            >
+              {profile?.is_published ? "Perfil Publicado" : "Publicar Perfil"}
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Publicar seu perfil?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Ao publicar seu perfil, ele ficará visível para todos os visitantes do site.
+                Certifique-se de que todas as informações estão corretas.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction onClick={handlePublish} disabled={isPublishing}>
+                {isPublishing ? "Publicando..." : "Publicar"}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </CardHeader>
       <CardContent>
         <Tabs value={activeTab} onValueChange={setActiveTab}>
