@@ -3,6 +3,7 @@ import { HowItWorks } from "./HowItWorks";
 import { SearchFilters } from "./SearchFilters";
 import { CompanionGrid } from "./CompanionGrid";
 import { PopularLocations } from "./PopularLocations";
+import { useInView } from "react-intersection-observer";
 
 interface MainContentProps {
   companions: any[];
@@ -17,19 +18,39 @@ export const MainContent = ({
   setViewMode, 
   handleSearch 
 }: MainContentProps) => {
+  const { ref: featuredRef, inView: featuredInView } = useInView({ triggerOnce: true });
+  const { ref: howItWorksRef, inView: howItWorksInView } = useInView({ triggerOnce: true });
+  const { ref: searchRef, inView: searchInView } = useInView({ triggerOnce: true });
+  const { ref: locationsRef, inView: locationsInView } = useInView({ triggerOnce: true });
+
   return (
-    <main className="container mx-auto px-4 py-12 space-y-16 animate-fade-in">
+    <main className="container mx-auto px-4 py-12 space-y-24">
       {companions && (
-        <div className="transform hover:scale-[1.01] transition-transform duration-300">
+        <div 
+          ref={featuredRef}
+          className={`transform transition-all duration-1000 ${
+            featuredInView ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
+          }`}
+        >
           <FeaturedCompanions companions={companions} />
         </div>
       )}
       
-      <div className="transform hover:scale-[1.01] transition-transform duration-300">
+      <div 
+        ref={howItWorksRef}
+        className={`transform transition-all duration-1000 delay-300 ${
+          howItWorksInView ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
+        }`}
+      >
         <HowItWorks />
       </div>
       
-      <div className="space-y-12">
+      <div 
+        ref={searchRef}
+        className={`space-y-12 transform transition-all duration-1000 ${
+          searchInView ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
+        }`}
+      >
         <SearchFilters 
           viewMode={viewMode} 
           setViewMode={setViewMode} 
@@ -53,7 +74,12 @@ export const MainContent = ({
         )}
       </div>
       
-      <div className="transform hover:scale-[1.01] transition-transform duration-300">
+      <div 
+        ref={locationsRef}
+        className={`transform transition-all duration-1000 delay-500 ${
+          locationsInView ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
+        }`}
+      >
         <PopularLocations />
       </div>
     </main>
