@@ -67,33 +67,42 @@ export const ProfileSettings = () => {
   };
 
   const handleSave = async (formData: any) => {
-    console.log('Saving form data:', formData);
+    console.log('Starting save operation with form data:', formData);
     setIsSaving(true);
+    
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("User not authenticated");
+      if (!user) {
+        console.error('No authenticated user found');
+        throw new Error("User not authenticated");
+      }
 
-      // Merge existing profile data with new form data
-      const updatedData = {
-        ...profile,
-        ...formData,
+      console.log('Current profile data:', profile);
+
+      // Ensure we have a user_id in the data
+      const dataToSave = {
+        user_id: user.id,
+        ...profile, // Keep existing profile data
+        ...formData, // Merge with new form data
         updated_at: new Date().toISOString()
       };
 
-      console.log('Saving updated data:', updatedData);
+      console.log('Attempting to save data:', dataToSave);
 
-      const { error } = await supabase
+      const { data: savedData, error } = await supabase
         .from('companions')
-        .upsert({
-          user_id: user.id,
-          ...updatedData
-        });
+        .upsert(dataToSave)
+        .select()
+        .single();
 
       if (error) {
         console.error('Error saving profile:', error);
         throw error;
       }
 
+      console.log('Successfully saved profile:', savedData);
+
+      // Update the cache with the new data
       await queryClient.invalidateQueries({ queryKey: ['companion-profile'] });
 
       toast({
@@ -102,7 +111,7 @@ export const ProfileSettings = () => {
         className: "bg-green-50 border-green-200",
       });
     } catch (error: any) {
-      console.error('Error saving profile:', error);
+      console.error('Error in save operation:', error);
       toast({
         title: "Erro ao salvar",
         description: error.message || "Não foi possível salvar as alterações.",
