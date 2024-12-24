@@ -28,7 +28,9 @@ export const Community = () => {
           totalMembers: 1250,
           activeDiscussions: 45,
           totalReviews: 892,
-          onlineNow: 78
+          onlineNow: 78,
+          topContributors: 25,
+          weeklyGrowth: 15
         };
       }
 
@@ -61,33 +63,33 @@ export const Community = () => {
           <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 text-transparent bg-clip-text">
             Comunidade VivAcompanhantes
           </h1>
-          <Button onClick={handleCreatePost}>
+          <Button onClick={handleCreatePost} className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
             <Plus className="w-4 h-4 mr-2" />
-            Criar Publicação
+            Nova Publicação
           </Button>
         </div>
 
         <CommunityStats stats={stats} isLoading={isLoadingStats} />
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mt-8">
-          <div className="lg:col-span-3">
-            <Card className="mb-8">
+          <div className="lg:col-span-3 space-y-8">
+            <Card className="bg-white/50">
               <CardContent className="p-6">
                 <CategoryList />
               </CardContent>
             </Card>
 
-            <Tabs defaultValue={activeTab} className="space-y-8" onValueChange={setActiveTab}>
+            <Tabs defaultValue={activeTab} onValueChange={setActiveTab}>
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="forum">Fórum</TabsTrigger>
+                <TabsTrigger value="forum">Feed</TabsTrigger>
                 <TabsTrigger value="reviews">Avaliações</TabsTrigger>
               </TabsList>
 
-              <TabsContent value="forum">
+              <TabsContent value="forum" className="mt-6">
                 <TopicList />
               </TabsContent>
 
-              <TabsContent value="reviews">
+              <TabsContent value="reviews" className="mt-6">
                 <CommunityReviews />
               </TabsContent>
             </Tabs>
@@ -95,6 +97,21 @@ export const Community = () => {
 
           <div className="space-y-8">
             <TrendingTopics />
+            
+            <Card className="bg-white/50">
+              <CardContent className="p-6">
+                <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5 text-purple-500" />
+                  Sugestões para Seguir
+                </h3>
+                {/* Placeholder for suggested users/topics */}
+                <div className="space-y-4">
+                  <p className="text-sm text-gray-500">
+                    Em breve você poderá seguir outros membros da comunidade!
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
