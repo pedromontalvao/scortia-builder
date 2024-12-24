@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserManagement } from "@/components/admin/UserManagement";
 import { CompanionManagement } from "@/components/admin/CompanionManagement";
+import { AdvertisementManagement } from "@/components/admin/AdvertisementManagement";
 import { ContentModeration } from "@/components/admin/ContentModeration";
 import { SubscriptionManagement } from "@/components/admin/SubscriptionManagement";
 import { Analytics } from "@/components/admin/Analytics";
@@ -18,6 +19,7 @@ export const AdminDashboard = () => {
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="mb-8">
             <TabsTrigger value="companions">Acompanhantes</TabsTrigger>
+            <TabsTrigger value="advertisements">Anúncios</TabsTrigger>
             <TabsTrigger value="users">Usuários</TabsTrigger>
             <TabsTrigger value="content">Moderação</TabsTrigger>
             <TabsTrigger value="subscriptions">Assinaturas</TabsTrigger>
@@ -27,6 +29,10 @@ export const AdminDashboard = () => {
 
           <TabsContent value="companions">
             <CompanionManagement />
+          </TabsContent>
+
+          <TabsContent value="advertisements">
+            <AdvertisementManagement />
           </TabsContent>
 
           <TabsContent value="users">

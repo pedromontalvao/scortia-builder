@@ -2,6 +2,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useEffect, useState } from "react";
 import { getStates, getCitiesByState, getNeighborhoodsByCity } from "@/lib/locations";
+import { useToast } from "@/hooks/use-toast";
 
 interface LocationFiltersProps {
   selectedState: string;
@@ -23,40 +24,85 @@ export const LocationFilters = ({
   const [states, setStates] = useState<string[]>([]);
   const [cities, setCities] = useState<string[]>([]);
   const [neighborhoods, setNeighborhoods] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     const loadStates = async () => {
-      const statesList = await getStates();
-      setStates(statesList);
+      try {
+        setIsLoading(true);
+        const statesList = await getStates();
+        console.log('States loaded:', statesList);
+        setStates(statesList);
+      } catch (error) {
+        console.error('Error loading states:', error);
+        toast({
+          title: "Erro ao carregar estados",
+          description: "Não foi possível carregar a lista de estados.",
+          variant: "destructive"
+        });
+      } finally {
+        setIsLoading(false);
+      }
     };
     loadStates();
-  }, []);
+  }, [toast]);
 
   useEffect(() => {
     const loadCities = async () => {
       if (selectedState) {
-        const citiesList = await getCitiesByState(selectedState);
-        setCities(citiesList);
+        try {
+          setIsLoading(true);
+          const citiesList = await getCitiesByState(selectedState);
+          console.log('Cities loaded for state:', selectedState, citiesList);
+          setCities(citiesList);
+        } catch (error) {
+          console.error('Error loading cities:', error);
+          toast({
+            title: "Erro ao carregar cidades",
+            description: "Não foi possível carregar a lista de cidades.",
+            variant: "destructive"
+          });
+        } finally {
+          setIsLoading(false);
+        }
       }
     };
     loadCities();
-  }, [selectedState]);
+  }, [selectedState, toast]);
 
   useEffect(() => {
     const loadNeighborhoods = async () => {
       if (selectedCity) {
-        const neighborhoodsList = await getNeighborhoodsByCity(selectedCity);
-        setNeighborhoods(neighborhoodsList);
+        try {
+          setIsLoading(true);
+          const neighborhoodsList = await getNeighborhoodsByCity(selectedCity);
+          console.log('Neighborhoods loaded for city:', selectedCity, neighborhoodsList);
+          setNeighborhoods(neighborhoodsList);
+        } catch (error) {
+          console.error('Error loading neighborhoods:', error);
+          toast({
+            title: "Erro ao carregar bairros",
+            description: "Não foi possível carregar a lista de bairros.",
+            variant: "destructive"
+          });
+        } finally {
+          setIsLoading(false);
+        }
       }
     };
     loadNeighborhoods();
-  }, [selectedCity]);
+  }, [selectedCity, toast]);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       <div>
         <Label>Estado</Label>
-        <Select value={selectedState} onValueChange={onStateChange}>
+        <Select 
+          value={selectedState} 
+          onValueChange={onStateChange}
+          disabled={isLoading}
+        >
           <SelectTrigger>
             <SelectValue placeholder="Selecione o estado" />
           </SelectTrigger>
@@ -72,7 +118,11 @@ export const LocationFilters = ({
 
       <div>
         <Label>Cidade</Label>
-        <Select value={selectedCity} onValueChange={onCityChange}>
+        <Select 
+          value={selectedCity} 
+          onValueChange={onCityChange}
+          disabled={isLoading || !selectedState}
+        >
           <SelectTrigger>
             <SelectValue placeholder="Selecione a cidade" />
           </SelectTrigger>
@@ -88,7 +138,11 @@ export const LocationFilters = ({
 
       <div>
         <Label>Bairro</Label>
-        <Select value={selectedNeighborhood} onValueChange={onNeighborhoodChange}>
+        <Select 
+          value={selectedNeighborhood} 
+          onValueChange={onNeighborhoodChange}
+          disabled={isLoading || !selectedCity}
+        >
           <SelectTrigger>
             <SelectValue placeholder="Selecione o bairro" />
           </SelectTrigger>
