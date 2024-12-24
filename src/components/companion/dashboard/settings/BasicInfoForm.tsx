@@ -1,11 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import InputMask from "react-input-mask";
 import { useToast } from "@/hooks/use-toast";
 import { fetchAddressByCep } from "@/lib/cep";
-import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 
 interface BasicInfoFormProps {
@@ -39,6 +38,7 @@ export const BasicInfoForm = ({ initialData, onSave }: BasicInfoFormProps) => {
         toast({
           title: "Endereço encontrado",
           description: "Os dados foram preenchidos automaticamente.",
+          className: "bg-green-50 border-green-200",
         });
       } catch (error) {
         console.error('Error fetching CEP:', error);
@@ -53,27 +53,29 @@ export const BasicInfoForm = ({ initialData, onSave }: BasicInfoFormProps) => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     onSave({
       name,
       description,
-      cep,
+      cep: cep.replace(/\D/g, ''),
       street,
       state,
       city,
       neighborhood,
-      whatsapp
+      whatsapp: whatsapp.replace(/\D/g, '')
     });
   };
 
   return (
-    <form className="space-y-6" data-tab="basic">
+    <form onSubmit={handleSubmit} data-tab="basic" className="space-y-6">
       <div>
         <Label htmlFor="name">Nome Artístico</Label>
         <Input
           id="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
+          className="mt-1"
         />
       </div>
 
@@ -84,12 +86,13 @@ export const BasicInfoForm = ({ initialData, onSave }: BasicInfoFormProps) => {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows={4}
+          className="mt-1"
         />
       </div>
 
       <div>
         <Label htmlFor="cep">CEP</Label>
-        <div className="flex gap-2">
+        <div className="flex gap-2 mt-1">
           <InputMask
             mask="99999-999"
             value={cep}
@@ -116,6 +119,7 @@ export const BasicInfoForm = ({ initialData, onSave }: BasicInfoFormProps) => {
           id="street"
           value={street}
           onChange={(e) => setStreet(e.target.value)}
+          className="mt-1"
         />
       </div>
 
@@ -126,6 +130,7 @@ export const BasicInfoForm = ({ initialData, onSave }: BasicInfoFormProps) => {
             id="state"
             value={state}
             onChange={(e) => setState(e.target.value)}
+            className="mt-1"
           />
         </div>
 
@@ -135,6 +140,7 @@ export const BasicInfoForm = ({ initialData, onSave }: BasicInfoFormProps) => {
             id="city"
             value={city}
             onChange={(e) => setCity(e.target.value)}
+            className="mt-1"
           />
         </div>
 
@@ -144,6 +150,7 @@ export const BasicInfoForm = ({ initialData, onSave }: BasicInfoFormProps) => {
             id="neighborhood"
             value={neighborhood}
             onChange={(e) => setNeighborhood(e.target.value)}
+            className="mt-1"
           />
         </div>
       </div>
@@ -160,6 +167,7 @@ export const BasicInfoForm = ({ initialData, onSave }: BasicInfoFormProps) => {
               {...inputProps}
               id="whatsapp"
               placeholder="(00) 00000-0000"
+              className="mt-1"
             />
           )}
         </InputMask>

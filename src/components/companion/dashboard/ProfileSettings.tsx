@@ -1,23 +1,19 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BasicInfoForm } from "./settings/BasicInfoForm";
-import { ServicesForm } from "./settings/ServicesForm";
-import { CharacteristicsForm } from "./settings/CharacteristicsForm";
-import { AvailabilityForm } from "./settings/AvailabilityForm";
 import { supabase } from "@/lib/supabase";
-import { useQuery } from "@tanstack/react-query";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { ProfileSettingsHeader } from "./settings/ProfileSettingsHeader";
+import { ProfileSettingsTabs } from "./settings/ProfileSettingsTabs";
 
 export const ProfileSettings = () => {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState("basic");
   const [isPublishing, setIsPublishing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  const { data: profile, isLoading, refetch } = useQuery({
+  const { data: profile, isLoading } = useQuery({
     queryKey: ['companion-profile'],
     queryFn: async () => {
       console.log('Fetching companion profile...');
@@ -83,11 +79,12 @@ export const ProfileSettings = () => {
 
       if (error) throw error;
 
-      await refetch();
+      await queryClient.invalidateQueries({ queryKey: ['companion-profile'] });
 
       toast({
         title: "Sucesso",
-        description: "Alterações salvas com sucesso!"
+        description: "Alterações salvas com sucesso!",
+        className: "bg-green-50 border-green-200",
       });
     } catch (error: any) {
       console.error('Error saving profile:', error);
@@ -123,11 +120,12 @@ export const ProfileSettings = () => {
 
       if (error) throw error;
 
-      await refetch();
+      await queryClient.invalidateQueries({ queryKey: ['companion-profile'] });
 
       toast({
         title: "Perfil publicado",
-        description: "Seu perfil está agora visível para todos!"
+        description: "Seu perfil está agora visível para todos!",
+        className: "bg-green-50 border-green-200",
       });
     } catch (error: any) {
       console.error('Error publishing profile:', error);
@@ -142,80 +140,28 @@ export const ProfileSettings = () => {
   };
 
   if (isLoading) {
-    return <div>Carregando...</div>;
+    return (
+      <Card className="w-full h-[600px] flex items-center justify-center">
+        <div className="animate-pulse text-gray-400">Carregando...</div>
+      </Card>
+    );
   }
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Configurações do Perfil</CardTitle>
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button 
-              variant="default" 
-              disabled={!profile || !isProfileComplete(profile) || profile.is_published}
-            >
-              {profile?.is_published ? "Perfil Publicado" : "Publicar Perfil"}
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Publicar seu perfil?</AlertDialogTitle>
-              <AlertDialogDescription>
-                Ao publicar seu perfil, ele ficará visível para todos os visitantes do site.
-                Certifique-se de que todas as informações estão corretas.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancelar</AlertDialogCancel>
-              <AlertDialogAction onClick={handlePublish} disabled={isPublishing}>
-                {isPublishing ? "Publicando..." : "Publicar"}
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      </CardHeader>
-      <CardContent>
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-4 mb-8">
-            <TabsTrigger value="basic">Informações Básicas</TabsTrigger>
-            <TabsTrigger value="services">Serviços</TabsTrigger>
-            <TabsTrigger value="characteristics">Características</TabsTrigger>
-            <TabsTrigger value="availability">Disponibilidade</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="basic">
-            <BasicInfoForm initialData={profile} onSave={handleSave} />
-          </TabsContent>
-
-          <TabsContent value="services">
-            <ServicesForm initialData={profile} onSave={handleSave} />
-          </TabsContent>
-
-          <TabsContent value="characteristics">
-            <CharacteristicsForm initialData={profile} onSave={handleSave} />
-          </TabsContent>
-
-          <TabsContent value="availability">
-            <AvailabilityForm initialData={profile} onSave={handleSave} />
-          </TabsContent>
-        </Tabs>
-
-        <div className="mt-8">
-          <Button 
-            onClick={() => {
-              const form = document.querySelector(`form[data-tab="${activeTab}"]`);
-              if (form) {
-                form.dispatchEvent(new Event('submit'));
-              }
-            }} 
-            className="w-full"
-            disabled={isSaving}
-          >
-            {isSaving ? "Salvando..." : "Salvar Alterações"}
-          </Button>
-        </div>
-      </CardContent>
+    <Card className="w-full">
+      <ProfileSettingsHeader
+        isProfileComplete={isProfileComplete(profile)}
+        isPublished={profile?.is_published}
+        isPublishing={isPublishing}
+        onPublish={handlePublish}
+      />
+      <ProfileSettingsTabs
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        profile={profile}
+        onSave={handleSave}
+        isSaving={isSaving}
+      />
     </Card>
   );
 };
