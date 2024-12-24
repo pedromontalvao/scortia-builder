@@ -3,6 +3,8 @@ import { HowItWorks } from "./HowItWorks";
 import { SearchFilters } from "./SearchFilters";
 import { CompanionGrid } from "./CompanionGrid";
 import { PopularLocations } from "./PopularLocations";
+import { CommunityCallout } from "./CommunityCallout";
+import { CommunityWidget } from "./CommunityWidget";
 import { useInView } from "react-intersection-observer";
 
 interface MainContentProps {
@@ -43,6 +45,11 @@ export const MainContent = ({
         }`}
       >
         <HowItWorks />
+      </div>
+
+      <div className="space-y-8">
+        <CommunityCallout />
+        <CommunityWidget />
       </div>
       
       <div 

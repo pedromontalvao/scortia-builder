@@ -7,7 +7,6 @@ import { HeroSection } from "@/components/HeroSection";
 import { LoadingState } from "@/components/home/LoadingState";
 import { ErrorState } from "@/components/home/ErrorState";
 import { MainContent } from "@/components/home/MainContent";
-import { CommunityWidget } from "@/components/home/CommunityWidget";
 
 interface IndexProps {
   city?: string;
@@ -18,6 +17,30 @@ const Index: React.FC<IndexProps> = ({ city }) => {
   const { toast } = useToast();
   const location = useLocation();
   
+  // Track user engagement
+  useEffect(() => {
+    const trackEngagement = () => {
+      const startTime = Date.now();
+      const visitCount = parseInt(localStorage.getItem("visitCount") || "0") + 1;
+      localStorage.setItem("visitCount", visitCount.toString());
+      localStorage.setItem("lastVisit", new Date().toISOString());
+
+      // Track time spent on page
+      const handleBeforeUnload = () => {
+        const timeSpent = Date.now() - startTime;
+        console.log("Time spent on page:", timeSpent / 1000, "seconds");
+        localStorage.setItem("averageTimeSpent", 
+          ((parseInt(localStorage.getItem("averageTimeSpent") || "0") * (visitCount - 1) + timeSpent) / visitCount).toString()
+        );
+      };
+
+      window.addEventListener("beforeunload", handleBeforeUnload);
+      return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+
+    return trackEngagement();
+  }, []);
+
   // Auto-detect user's location
   useEffect(() => {
     const detectLocation = async () => {
@@ -27,6 +50,11 @@ const Index: React.FC<IndexProps> = ({ city }) => {
         });
         
         console.log("User location detected:", position.coords);
+        localStorage.setItem("userLocation", JSON.stringify({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+          timestamp: Date.now()
+        }));
         
         toast({
           title: "Localização detectada",
@@ -118,9 +146,20 @@ const Index: React.FC<IndexProps> = ({ city }) => {
     }
   }, []);
 
-  // Track page views
+  // Track page views and user behavior
   useEffect(() => {
     console.log('Page view:', location.pathname);
+    
+    // Track scroll depth
+    const handleScroll = () => {
+      const scrollDepth = (window.scrollY + window.innerHeight) / document.documentElement.scrollHeight * 100;
+      if (scrollDepth > parseFloat(localStorage.getItem("maxScrollDepth") || "0")) {
+        localStorage.setItem("maxScrollDepth", scrollDepth.toString());
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [location]);
 
   const handleSearch = (filters: any) => {
@@ -141,18 +180,12 @@ const Index: React.FC<IndexProps> = ({ city }) => {
       ) : error ? (
         <ErrorState />
       ) : (
-        <>
-          <MainContent
-            companions={companions || []}
-            viewMode={viewMode}
-            setViewMode={setViewMode}
-            handleSearch={handleSearch}
-          />
-          
-          <div className="container mx-auto px-4 py-12">
-            <CommunityWidget />
-          </div>
-        </>
+        <MainContent
+          companions={companions || []}
+          viewMode={viewMode}
+          setViewMode={setViewMode}
+          handleSearch={handleSearch}
+        />
       )}
     </div>
   );
