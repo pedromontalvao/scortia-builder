@@ -34,21 +34,24 @@ export const ProfileContent = ({ companion }: ProfileContentProps) => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* Main content area - 8 columns on desktop */}
         <div className="lg:col-span-8 space-y-8">
-          <PersonalInfo
-            age={companion.age || ""}
-            height={companion.height || ""}
-            weight={companion.weight || ""}
-            hair={companion.hair_color || ""}
-            eyes={companion.eye_color || ""}
-            physique={companion.body_type || ""}
-          />
-          
-          <Measurements
-            bust={companion.bust || ""}
-            waist={companion.waist || ""}
-            hips={companion.hips || ""}
-          />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <PersonalInfo
+              age={companion.age || ""}
+              height={companion.height || ""}
+              weight={companion.weight || ""}
+              hair={companion.hair_color || ""}
+              eyes={companion.eye_color || ""}
+              physique={companion.body_type || ""}
+            />
+            
+            <Measurements
+              bust={companion.bust || ""}
+              waist={companion.waist || ""}
+              hips={companion.hips || ""}
+            />
+          </div>
           
           <PhotoGallery 
             photos={companion.companion_photos?.map(photo => photo.url) || []} 
@@ -80,24 +83,29 @@ export const ProfileContent = ({ companion }: ProfileContentProps) => {
           )}
         </div>
 
+        {/* Sidebar area - 4 columns on desktop */}
         <div className="lg:col-span-4 space-y-8">
-          <ContactInfo
-            whatsapp={companion.whatsapp || ""}
-            email={companion.email || ""}
-            schedule={{
-              weekdays: companion.weekday_hours || "Sob consulta",
-              saturday: companion.weekend_hours || "Sob consulta"
-            }}
-            onContact={handleContact}
-          />
-          
-          <LocationInfo
-            location={`${companion.neighborhood}, ${companion.city} - ${companion.state}`}
-            serviceAreas={companion.service_areas || []}
-            neighborhood={companion.neighborhood || ""}
-            city={companion.city || ""}
-            state={companion.state || ""}
-          />
+          <div className="sticky top-24">
+            <ContactInfo
+              whatsapp={companion.whatsapp || ""}
+              email={companion.email || ""}
+              schedule={{
+                weekdays: companion.weekday_hours || "Sob consulta",
+                saturday: companion.weekend_hours || "Sob consulta"
+              }}
+              onContact={handleContact}
+            />
+            
+            <div className="mt-8">
+              <LocationInfo
+                location={`${companion.neighborhood}, ${companion.city} - ${companion.state}`}
+                serviceAreas={companion.service_areas || []}
+                neighborhood={companion.neighborhood || ""}
+                city={companion.city || ""}
+                state={companion.state || ""}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
