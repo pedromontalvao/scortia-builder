@@ -21,6 +21,12 @@ import { CompanionRegistrationForm } from "@/components/companion/registration/C
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 
+// Import state pages
+import SaoPaulo from "./pages/states/SaoPaulo";
+import RioDeJaneiro from "./pages/states/RioDeJaneiro";
+import MinasGerais from "./pages/states/MinasGerais";
+// ... Add other state imports
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -57,6 +63,12 @@ const App = () => {
                       <Route path="configuracoes" element={<ProfileSettings />} />
                     </Route>
                     <Route path="/admin" element={<AdminDashboard />} />
+                    
+                    {/* State Routes */}
+                    <Route path="/sao-paulo" element={<SaoPaulo />} />
+                    <Route path="/rio-de-janeiro" element={<RioDeJaneiro />} />
+                    <Route path="/minas-gerais" element={<MinasGerais />} />
+                    {/* Add other state routes */}
                   </Routes>
                 </main>
                 <Footer />
