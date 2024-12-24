@@ -18,7 +18,12 @@ interface FeaturedCompanionsProps {
 }
 
 export const FeaturedCompanions = ({ companions }: FeaturedCompanionsProps) => {
-  if (!companions.length) return null;
+  console.log('FeaturedCompanions received companions:', companions);
+  
+  if (!companions?.length) {
+    console.log('No companions data available');
+    return null;
+  }
 
   return (
     <section className="space-y-8">
@@ -28,23 +33,28 @@ export const FeaturedCompanions = ({ companions }: FeaturedCompanionsProps) => {
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {companions.map((companion) => (
-          <CompanionCard
-            key={companion.id}
-            id={companion.id}
-            name={companion.name}
-            rating={companion.rating}
-            reviews={companion.reviews}
-            price={companion.price}
-            services={companion.services}
-            imageUrl={companion.companion_photos[0]?.url || "/placeholder.svg"}
-            isPremium={companion.is_premium}
-            isVerified={companion.is_verified}
-            neighborhood={companion.neighborhood}
-            city={companion.city}
-            state={companion.state}
-          />
-        ))}
+        {companions.map((companion) => {
+          console.log('Processing companion:', companion);
+          const imageUrl = companion.companion_photos?.[0]?.url || "/placeholder.svg";
+          
+          return (
+            <CompanionCard
+              key={companion.id}
+              id={companion.id}
+              name={companion.name}
+              rating={companion.rating}
+              reviews={companion.reviews}
+              price={companion.price}
+              services={companion.services}
+              imageUrl={imageUrl}
+              isPremium={companion.is_premium}
+              isVerified={companion.is_verified}
+              neighborhood={companion.neighborhood}
+              city={companion.city}
+              state={companion.state}
+            />
+          );
+        })}
       </div>
     </section>
   );

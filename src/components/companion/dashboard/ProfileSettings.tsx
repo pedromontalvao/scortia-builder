@@ -110,6 +110,38 @@ export const ProfileSettings = () => {
     }
   };
 
+  const isProfileComplete = (profile: CompanionProfile | null): boolean => {
+    if (!profile) return false;
+    
+    const requiredFields = [
+      'name',
+      'description',
+      'cep',
+      'street',
+      'state',
+      'city',
+      'neighborhood',
+      'whatsapp',
+      'services',
+      'ethnicity',
+      'body_type',
+      'hair_color',
+      'breast_type',
+      'height',
+      'weight',
+      'measurements',
+      'availability'
+    ];
+
+    return requiredFields.every(field => {
+      const hasField = profile[field as keyof CompanionProfile];
+      if (!hasField) {
+        console.log(`Missing required field: ${field}`);
+      }
+      return hasField;
+    });
+  };
+
   if (isLoading) {
     return (
       <Card className="w-full h-[600px] flex items-center justify-center">
@@ -121,7 +153,7 @@ export const ProfileSettings = () => {
   return (
     <Card className="w-full">
       <ProfileSettingsHeader
-        isProfileComplete={isProfileComplete}
+        isProfileComplete={profile ? isProfileComplete(profile) : false}
         isPublished={profile?.is_published}
         isPublishing={isPublishing}
         onPublish={handlePublish}
@@ -135,37 +167,4 @@ export const ProfileSettings = () => {
       />
     </Card>
   );
-};
-
-// Helper function to check if profile is complete
-const isProfileComplete = (profile: CompanionProfile | null) => {
-  if (!profile) return false;
-  
-  const requiredFields = [
-    'name',
-    'description',
-    'cep',
-    'street',
-    'state',
-    'city',
-    'neighborhood',
-    'whatsapp',
-    'services',
-    'ethnicity',
-    'body_type',
-    'hair_color',
-    'breast_type',
-    'height',
-    'weight',
-    'measurements',
-    'availability'
-  ];
-
-  return requiredFields.every(field => {
-    const hasField = profile[field as keyof CompanionProfile];
-    if (!hasField) {
-      console.log(`Missing required field: ${field}`);
-    }
-    return hasField;
-  });
 };

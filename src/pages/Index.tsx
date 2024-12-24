@@ -26,22 +26,20 @@ const Index: React.FC<IndexProps> = ({ city }) => {
       
       if (import.meta.env.DEV && (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY)) {
         console.log('Using demo data in development mode');
-        return [
-          {
-            id: 'demo-1',
-            name: 'Ana Silva',
-            rating: 4.8,
-            reviews: 24,
-            price: 300,
-            services: ['Massagem', 'Jantar', 'Eventos'],
-            imageUrl: '/demo/ana-1.jpg',
-            is_premium: true,
-            is_verified: true,
-            neighborhood: 'Centro',
-            city: 'São Paulo',
-            state: 'SP'
-          },
-        ];
+        return [{
+          id: 'demo-1',
+          name: 'Ana Silva',
+          rating: 4.8,
+          reviews: 24,
+          price: 300,
+          services: ['Massagem', 'Jantar', 'Eventos'],
+          companion_photos: [{ url: '/demo/ana-1.jpg' }],
+          is_premium: true,
+          is_verified: true,
+          neighborhood: 'Centro',
+          city: 'São Paulo',
+          state: 'SP'
+        }];
       }
 
       let query = supabase.from('companions').select(`
@@ -70,14 +68,8 @@ const Index: React.FC<IndexProps> = ({ city }) => {
         throw error;
       }
       
-      // Map the data to include imageUrl
-      const processedData = data?.map(companion => ({
-        ...companion,
-        imageUrl: companion.companion_photos?.[0]?.url || '/placeholder.svg'
-      })) || [];
-
-      console.log('Fetched and processed companions:', processedData);
-      return processedData;
+      console.log('Fetched companions data:', data);
+      return data || [];
     },
     meta: {
       onError: () => {
@@ -136,7 +128,7 @@ const Index: React.FC<IndexProps> = ({ city }) => {
       <HeroSection />
       <main className="container mx-auto px-4 py-12">
         <div className="space-y-16">
-          <FeaturedCompanions companions={companions?.slice(0, 4) || []} />
+          {companions && <FeaturedCompanions companions={companions} />}
           
           <HowItWorks />
           
