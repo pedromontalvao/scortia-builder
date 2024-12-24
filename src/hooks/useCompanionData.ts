@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 
-// Enhanced demo data
 const demoCompanion = {
   id: "demo-1",
   name: "Ana Silva",
@@ -83,15 +82,14 @@ const demoCompanion = {
     satisfaction_rate: 98
   },
   user_id: "demo-user-1",
-  followers: 245,
-  following: 132,
   community_posts: [
     {
       id: "post-1",
       content: "Acabei de adicionar novas fotos ao meu perfil! 📸 Confiram!",
       likes: 24,
       comments: 8,
-      created_at: "2024-03-20T10:30:00Z"
+      created_at: "2024-03-20T10:30:00Z",
+      is_premium: true
     },
     {
       id: "post-2",
@@ -105,9 +103,12 @@ const demoCompanion = {
       content: "Novo ensaio fotográfico disponível para assinantes! 🔥",
       likes: 67,
       comments: 15,
-      created_at: "2024-03-18T20:15:00Z"
+      created_at: "2024-03-18T20:15:00Z",
+      is_premium: true
     }
-  ]
+  ],
+  subscription_price: 49.90,
+  has_active_subscription: false
 };
 
 export const useCompanionData = (id?: string) => {

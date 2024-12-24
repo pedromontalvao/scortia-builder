@@ -67,6 +67,8 @@ export const CompanionProfile = () => {
               posts={companion.community_posts || []}
               followers={companion.followers || 0}
               following={companion.following || 0}
+              subscriptionPrice={companion.subscription_price}
+              hasActiveSubscription={companion.has_active_subscription}
             />
           </div>
         </div>
