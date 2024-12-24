@@ -11,12 +11,11 @@ if (!supabaseUrl || !supabaseAnonKey) {
   
   if (!isDevelopment) {
     console.error('Missing Supabase configuration in production environment.');
-    throw new Error('Missing Supabase configuration');
   }
 }
 
 export const supabase = createClient(
-  supabaseUrl || 'https://your-demo-project.supabase.co',
+  supabaseUrl || 'https://example.supabase.co',
   supabaseAnonKey || 'demo-key',
   {
     auth: {

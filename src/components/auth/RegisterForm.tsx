@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { supabase, checkSupabaseConnection } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase";
 import { RegistrationBasicInfo } from "./registration/RegistrationBasicInfo";
 import { RegistrationPassword } from "./registration/RegistrationPassword";
 
@@ -45,14 +45,29 @@ export const RegisterForm = ({ onClose }: { onClose: () => void }) => {
         return;
       }
 
-      // Check Supabase connection first
-      const isConnected = await checkSupabaseConnection();
-      if (!isConnected) {
-        throw new Error('Unable to connect to the database');
+      // In development mode, simulate successful registration
+      if (process.env.NODE_ENV === 'development' && (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY)) {
+        console.log('Running in demo mode - simulating successful registration');
+        
+        toast({
+          title: "Cadastro realizado com sucesso!",
+          description: "Bem-vindo(a)! (Modo demonstração)"
+        });
+
+        localStorage.setItem("userType", formData.userType);
+        localStorage.setItem("isLoggedIn", "true");
+        
+        onClose();
+        
+        if (formData.userType === "companion") {
+          navigate("/painel");
+        } else {
+          navigate("/");
+        }
+        
+        return;
       }
 
-      console.log('Attempting to register user with Supabase Auth...');
-      
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
@@ -115,11 +130,11 @@ export const RegisterForm = ({ onClose }: { onClose: () => void }) => {
         navigate("/");
       }
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Registration error:', error);
       toast({
         title: "Erro no cadastro",
-        description: "Ocorreu um erro ao realizar o cadastro. Tente novamente.",
+        description: error.message || "Ocorreu um erro ao realizar o cadastro. Tente novamente.",
         variant: "destructive"
       });
     } finally {
