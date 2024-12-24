@@ -1,7 +1,22 @@
 import { CompanionCard } from "@/components/CompanionCard";
 
+interface Companion {
+  id: string;
+  name: string;
+  rating: number;
+  reviews: number;
+  price: number;
+  services: string[];
+  imageUrl: string;
+  isPremium?: boolean;
+  isVerified?: boolean;
+  neighborhood?: string;
+  city?: string;
+  state?: string;
+}
+
 interface CompanionGridProps {
-  companions: any[];
+  companions: Companion[];
   isLoading?: boolean;
   viewMode?: "grid" | "list";
 }
@@ -28,8 +43,18 @@ export const CompanionGrid = ({ companions, isLoading = false, viewMode = "grid"
       {companions.map((companion) => (
         <CompanionCard
           key={companion.id}
-          companion={companion}
-          viewMode={viewMode}
+          id={companion.id}
+          name={companion.name}
+          rating={companion.rating}
+          reviews={companion.reviews}
+          price={companion.price}
+          services={companion.services}
+          imageUrl={companion.imageUrl}
+          isPremium={companion.isPremium}
+          isVerified={companion.isVerified}
+          neighborhood={companion.neighborhood}
+          city={companion.city}
+          state={companion.state}
         />
       ))}
     </div>

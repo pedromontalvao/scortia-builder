@@ -5,7 +5,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
-import { getStates, getCitiesByState, getNeighborhoodsByCity } from "@/lib/locations";
+import { fetchAddressByCep } from "@/lib/cep";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 
 interface BasicInfoFormProps {
   initialData?: any;
@@ -15,44 +17,39 @@ interface BasicInfoFormProps {
 export const BasicInfoForm = ({ initialData, onSave }: BasicInfoFormProps) => {
   const [name, setName] = useState(initialData?.name || "");
   const [description, setDescription] = useState(initialData?.description || "");
+  const [cep, setCep] = useState(initialData?.cep || "");
+  const [street, setStreet] = useState(initialData?.street || "");
   const [state, setState] = useState(initialData?.state || "");
-  const [cities, setCities] = useState<string[]>([]);
-  const [selectedCity, setSelectedCity] = useState(initialData?.city || "");
-  const [neighborhoods, setNeighborhoods] = useState<string[]>([]);
-  const [selectedNeighborhood, setSelectedNeighborhood] = useState(initialData?.neighborhood || "");
+  const [city, setCity] = useState(initialData?.city || "");
+  const [neighborhood, setNeighborhood] = useState(initialData?.neighborhood || "");
   const [whatsapp, setWhatsapp] = useState(initialData?.whatsapp || "");
+  const [isLoadingCep, setIsLoadingCep] = useState(false);
   const { toast } = useToast();
 
-  const handleStateChange = async (newState: string) => {
-    setState(newState);
-    try {
-      const citiesList = await getCitiesByState(newState);
-      setCities(citiesList);
-      setSelectedCity("");
-      setSelectedNeighborhood("");
-    } catch (error) {
-      console.error("Error fetching cities:", error);
-      toast({
-        title: "Erro ao carregar cidades",
-        description: "Não foi possível carregar a lista de cidades.",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const handleCityChange = async (newCity: string) => {
-    setSelectedCity(newCity);
-    try {
-      const neighborhoodsList = await getNeighborhoodsByCity(newCity);
-      setNeighborhoods(neighborhoodsList);
-      setSelectedNeighborhood("");
-    } catch (error) {
-      console.error("Error fetching neighborhoods:", error);
-      toast({
-        title: "Erro ao carregar bairros",
-        description: "Não foi possível carregar a lista de bairros.",
-        variant: "destructive"
-      });
+  const handleCepBlur = async () => {
+    if (cep.length === 8) {
+      setIsLoadingCep(true);
+      try {
+        const address = await fetchAddressByCep(cep);
+        setState(address.uf);
+        setCity(address.localidade);
+        setNeighborhood(address.bairro);
+        setStreet(address.logradouro);
+        
+        toast({
+          title: "Endereço encontrado",
+          description: "Os dados foram preenchidos automaticamente.",
+        });
+      } catch (error) {
+        console.error('Error fetching CEP:', error);
+        toast({
+          title: "Erro ao buscar CEP",
+          description: "Verifique se o CEP está correto e tente novamente.",
+          variant: "destructive"
+        });
+      } finally {
+        setIsLoadingCep(false);
+      }
     }
   };
 
@@ -60,9 +57,11 @@ export const BasicInfoForm = ({ initialData, onSave }: BasicInfoFormProps) => {
     onSave({
       name,
       description,
+      cep,
+      street,
       state,
-      city: selectedCity,
-      neighborhood: selectedNeighborhood,
+      city,
+      neighborhood,
       whatsapp
     });
   };
@@ -88,49 +87,61 @@ export const BasicInfoForm = ({ initialData, onSave }: BasicInfoFormProps) => {
         />
       </div>
 
+      <div>
+        <Label htmlFor="cep">CEP</Label>
+        <div className="flex gap-2">
+          <Input
+            id="cep"
+            value={cep}
+            onChange={(e) => setCep(e.target.value.replace(/\D/g, ''))}
+            onBlur={handleCepBlur}
+            maxLength={8}
+            placeholder="00000000"
+          />
+          {isLoadingCep && (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          )}
+        </div>
+      </div>
+
+      <div>
+        <Label htmlFor="street">Endereço</Label>
+        <Input
+          id="street"
+          value={street}
+          onChange={(e) => setStreet(e.target.value)}
+        />
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
           <Label htmlFor="state">Estado</Label>
-          <Select value={state} onValueChange={handleStateChange}>
-            <SelectTrigger>
-              <SelectValue placeholder="Selecione o estado" />
-            </SelectTrigger>
-            <SelectContent>
-              {/* Add state options */}
-            </SelectContent>
-          </Select>
+          <Input
+            id="state"
+            value={state}
+            onChange={(e) => setState(e.target.value)}
+            readOnly
+          />
         </div>
 
         <div>
           <Label htmlFor="city">Cidade</Label>
-          <Select value={selectedCity} onValueChange={handleCityChange}>
-            <SelectTrigger>
-              <SelectValue placeholder="Selecione a cidade" />
-            </SelectTrigger>
-            <SelectContent>
-              {cities.map((city) => (
-                <SelectItem key={city} value={city}>
-                  {city}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Input
+            id="city"
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            readOnly
+          />
         </div>
 
         <div>
           <Label htmlFor="neighborhood">Bairro</Label>
-          <Select value={selectedNeighborhood} onValueChange={setSelectedNeighborhood}>
-            <SelectTrigger>
-              <SelectValue placeholder="Selecione o bairro" />
-            </SelectTrigger>
-            <SelectContent>
-              {neighborhoods.map((neighborhood) => (
-                <SelectItem key={neighborhood} value={neighborhood}>
-                  {neighborhood}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Input
+            id="neighborhood"
+            value={neighborhood}
+            onChange={(e) => setNeighborhood(e.target.value)}
+            readOnly
+          />
         </div>
       </div>
 
