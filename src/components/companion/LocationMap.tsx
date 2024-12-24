@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 
 interface LocationMapProps {
   neighborhood: string;
@@ -9,7 +8,7 @@ interface LocationMapProps {
 
 export const LocationMap = ({ neighborhood, city, state }: LocationMapProps) => {
   const [coordinates, setCoordinates] = useState({
-    lat: -23.550520, // Default to São Paulo
+    lat: -23.550520,
     lng: -46.633308,
   });
   const [isLoading, setIsLoading] = useState(true);
@@ -20,18 +19,18 @@ export const LocationMap = ({ neighborhood, city, state }: LocationMapProps) => 
         console.log('Fetching coordinates for:', { neighborhood, city, state });
         const address = `${neighborhood}, ${city}, ${state}, Brazil`;
         const response = await fetch(
-          `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}`
+          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`
         );
         const data = await response.json();
         console.log('Geocoding response:', data);
         
-        if (data.results && data.results[0]) {
-          const { lat, lng } = data.results[0].geometry.location;
+        if (data && data[0]) {
+          const { lat, lon } = data[0];
           // Add some random offset to avoid exact location (for privacy)
           const offset = 0.01; // Roughly 1km
           const newCoordinates = {
-            lat: lat + (Math.random() - 0.5) * offset,
-            lng: lng + (Math.random() - 0.5) * offset,
+            lat: Number(lat) + (Math.random() - 0.5) * offset,
+            lng: Number(lon) + (Math.random() - 0.5) * offset,
           };
           console.log('Setting new coordinates:', newCoordinates);
           setCoordinates(newCoordinates);
@@ -53,29 +52,16 @@ export const LocationMap = ({ neighborhood, city, state }: LocationMapProps) => 
   }
 
   return (
-    <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
-      <GoogleMap
-        mapContainerClassName="w-full h-[300px] rounded-lg"
-        center={coordinates}
-        zoom={14}
-        options={{
-          streetViewControl: false,
-          mapTypeControl: false,
-          fullscreenControl: false,
-          styles: [
-            {
-              featureType: "poi",
-              elementType: "labels",
-              stylers: [{ visibility: "off" }]
-            }
-          ]
-        }}
-      >
-        <Marker
-          position={coordinates}
-          title={`${neighborhood}, ${city}`}
-        />
-      </GoogleMap>
-    </LoadScript>
+    <div className="w-full h-[300px] rounded-lg overflow-hidden">
+      <iframe
+        width="100%"
+        height="100%"
+        frameBorder="0"
+        scrolling="no"
+        marginHeight={0}
+        marginWidth={0}
+        src={`https://www.openstreetmap.org/export/embed.html?bbox=${coordinates.lng - 0.02}%2C${coordinates.lat - 0.02}%2C${coordinates.lng + 0.02}%2C${coordinates.lat + 0.02}&layer=mapnik&marker=${coordinates.lat}%2C${coordinates.lng}`}
+      />
+    </div>
   );
 };

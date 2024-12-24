@@ -4,12 +4,10 @@ import { ProfileHeader } from "@/components/companion/ProfileHeader";
 import { ProfileContent } from "@/components/companion/ProfileContent";
 import { NotFoundState } from "@/components/companion/NotFoundState";
 import { CommunityProfile } from "@/components/companion/CommunityProfile";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { FloatingWhatsApp } from "@/components/companion/FloatingWhatsApp";
 
 export const CompanionProfile = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const { data: companion, isLoading, error } = useCompanionData(id);
 
   if (isLoading) {
@@ -29,17 +27,6 @@ export const CompanionProfile = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
-      <div className="container mx-auto px-4 py-4">
-        <Button
-          variant="ghost"
-          className="mb-4 hover:bg-purple-100 transition-colors"
-          onClick={() => navigate(-1)}
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Voltar
-        </Button>
-      </div>
-
       <ProfileHeader
         name={companion.name}
         description={companion.description || ""}
@@ -73,6 +60,13 @@ export const CompanionProfile = () => {
           </div>
         </div>
       </div>
+
+      {companion.whatsapp && (
+        <FloatingWhatsApp 
+          phoneNumber={companion.whatsapp} 
+          name={companion.name} 
+        />
+      )}
     </div>
   );
 };
