@@ -4,7 +4,6 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import Index from "@/pages/Index";
 import { CompanionProfile } from "@/pages/CompanionProfile";
-import { Matching } from "@/pages/Matching";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // Create a client
@@ -27,7 +26,6 @@ function App() {
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/acompanhante/:id" element={<CompanionProfile />} />
-              <Route path="/matching" element={<Matching />} />
             </Routes>
           </main>
           <Footer />
