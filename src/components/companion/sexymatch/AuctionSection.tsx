@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { Trophy, DollarSign, Users, Timer } from "lucide-react";
+import { Trophy, DollarSign, Users, Timer, Coins } from "lucide-react";
 import { format, differenceInSeconds } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import {
@@ -39,8 +39,8 @@ export const AuctionSection = ({
   highestBid,
   totalBids
 }: AuctionSectionProps) => {
-  const [bidAmount, setBidAmount] = useState("");
   const [timeLeft, setTimeLeft] = useState("");
+  const [userCredits, setUserCredits] = useState(100); // Demo: Start with 100 credits
   const { toast } = useToast();
 
   useEffect(() => {
@@ -66,11 +66,10 @@ export const AuctionSection = ({
   }, [endTime]);
 
   const handleBid = () => {
-    const amount = Number(bidAmount);
-    if (amount <= currentPrice) {
+    if (userCredits < 1) {
       toast({
-        title: "Lance inválido",
-        description: "Seu lance deve ser maior que o valor atual",
+        title: "Créditos insuficientes",
+        description: "Você precisa comprar mais créditos para continuar participando.",
         variant: "destructive"
       });
       return;
@@ -78,15 +77,15 @@ export const AuctionSection = ({
 
     // In development mode, simulate successful bid
     if (process.env.NODE_ENV === 'development') {
+      setUserCredits(prev => prev - 1); // Deduct 1 credit (1 centavo)
       toast({
-        title: "Lance enviado!",
-        description: "Seu lance foi registrado com sucesso.",
+        title: "Lance registrado!",
+        description: "Seu lance de R$ 0,01 foi registrado com sucesso.",
       });
-      setBidAmount("");
       return;
     }
 
-    console.log("Submitting bid:", { companionId, amount });
+    console.log("Submitting bid:", { companionId, amount: 0.01 });
   };
 
   return (
@@ -105,9 +104,9 @@ export const AuctionSection = ({
             <div className="text-center p-4 bg-white/50 rounded-lg">
               <DollarSign className="w-6 h-6 text-green-500 mx-auto mb-2" />
               <div className="text-2xl font-bold text-green-600">
-                R$ {currentPrice}
+                R$ {currentPrice.toFixed(2)}
               </div>
-              <div className="text-sm text-gray-600">Lance Atual</div>
+              <div className="text-sm text-gray-600">Valor Atual</div>
             </div>
             
             <div className="text-center p-4 bg-white/50 rounded-lg col-span-2">
@@ -127,31 +126,29 @@ export const AuctionSection = ({
             </div>
           </div>
 
-          <div className="space-y-4">
-            <div className="flex gap-2">
-              <Input
-                type="number"
-                value={bidAmount}
-                onChange={(e) => setBidAmount(e.target.value)}
-                placeholder="Digite seu lance"
-                className="flex-1"
-                min={currentPrice + 1}
-                step="1"
-              />
+          <div className="p-4 bg-white/50 rounded-lg">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Coins className="w-5 h-5 text-yellow-500" />
+                <span className="font-medium">Seus créditos:</span>
+              </div>
+              <span className="font-bold text-lg">{userCredits}</span>
+            </div>
+            <div className="space-y-4">
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button 
-                    className="bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700"
+                    className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700"
                   >
-                    Dar Lance
+                    Dar Lance (1 crédito)
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
                     <AlertDialogTitle>Confirmar Lance</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Você está prestes a dar um lance de R$ {bidAmount}. Esta ação não pode ser desfeita.
-                      Ao confirmar, você concorda com os termos do leilão.
+                      Você está prestes a dar um lance de R$ 0,01. Esta ação não pode ser desfeita.
+                      Será descontado 1 crédito da sua conta.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
@@ -162,10 +159,25 @@ export const AuctionSection = ({
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
+
+              <Button 
+                variant="outline"
+                className="w-full"
+                onClick={() => {
+                  toast({
+                    title: "Comprar créditos",
+                    description: "Funcionalidade em desenvolvimento.",
+                  });
+                }}
+              >
+                Comprar mais créditos
+              </Button>
             </div>
             
-            <div className="text-sm text-gray-500">
-              * Lance mínimo: R$ {currentPrice + 1}
+            <div className="mt-4 space-y-2 text-sm text-gray-500">
+              <p>* Cada lance custa 1 crédito (R$ 0,01)</p>
+              <p>* O último lance antes do fim do temporizador vence o leilão</p>
+              <p>* Os créditos não são reembolsáveis</p>
             </div>
           </div>
         </div>
