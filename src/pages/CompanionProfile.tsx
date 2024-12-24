@@ -1,10 +1,9 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useCompanionData } from "@/hooks/useCompanionData";
 import { ProfileHeader } from "@/components/companion/ProfileHeader";
 import { ProfileContent } from "@/components/companion/ProfileContent";
 import { NotFoundState } from "@/components/companion/NotFoundState";
 import { CommunityProfile } from "@/components/companion/CommunityProfile";
-import { FloatingWhatsApp } from "@/components/companion/FloatingWhatsApp";
 
 export const CompanionProfile = () => {
   const { id } = useParams();
@@ -41,6 +40,7 @@ export const CompanionProfile = () => {
         isPremium={companion.is_premium || false}
         isVerified={companion.is_verified || false}
         imageUrl={primaryPhoto || "/placeholder.svg"}
+        whatsapp={companion.whatsapp}
       />
       
       <div className="container mx-auto px-4 py-8">
@@ -60,13 +60,6 @@ export const CompanionProfile = () => {
           </div>
         </div>
       </div>
-
-      {companion.whatsapp && (
-        <FloatingWhatsApp 
-          phoneNumber={companion.whatsapp} 
-          name={companion.name} 
-        />
-      )}
     </div>
   );
 };
